@@ -24,4 +24,5 @@ target_link_libraries(
 	Misc
 	Window
 	Boost
+	FreeType-Wrapper
 )
