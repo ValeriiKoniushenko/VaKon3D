@@ -22,7 +22,40 @@
 
 #pragma once
 
+#include "Size.h"
+#include "Vao.h"
+#include "WidgetVbo.h"
+
+class Texture;
+class ShaderPack;
+
 class Widget
 {
 public:
+	void setTexture(Texture& texture);
+	[[nodiscard]] Texture* getTexture();
+	[[nodiscard]] const Texture* getTexture() const;
+	void resetTexture();
+
+	void setSize(Utils::FSize2D size);
+	[[nodiscard]] Utils::FSize2D getSize() const;
+
+	void draw(ShaderPack& shaderPack);
+
+private:
+	Texture* texture_ = nullptr;
+	Vao vao_;
+	WidgetVbo vbo_;
+	Utils::FSize2D size_ = {100.f, 100.f};
+	bool isDirtyVertices_ = true;
+	bool isDirtyTexture_ = true;
+
+	const inline static std::vector<WidgetVbo::Unit> verticesTemplate_ = {
+		{{0.f, 0.f}, {0.f, 0.f}},
+		{{1.f, 0.f}, {1.f, 0.f}},
+		{{1.f, 1.f}, {1.f, 1.f}},
+		{{0.f, 0.f}, {0.f, 0.f}},
+		{{1.f, 1.f}, {1.f, 1.f}},
+		{{0.f, 1.f}, {0.f, 1.f}},
+	};
 };

@@ -25,13 +25,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Image::Image(std::filesystem::path&& path)
+Image::Image(std::filesystem::path&& path, Gl::Texture::Channel channel /* = Gl::Texture::Channel::SRGB*/)
 {
 	init_();
 	if (!path.empty())
 	{
 		loadImage(std::forward<std::filesystem::path>(path));
 	}
+	setInternalChannel(channel);
 }
 
 Image::~Image()

@@ -21,3 +21,91 @@
 // SOFTWARE.
 
 #include "Widget.h"
+
+#include "ShaderPack.h"
+#include "Texture.h"
+#include "Window.h"
+#include "glm/ext/matrix_clip_space.hpp"
+
+void Widget::setTexture(Texture& texture)
+{
+	texture_ = &texture;
+	isDirtyTexture_ = true;
+}
+
+Texture* Widget::getTexture()
+{
+	return texture_;
+}
+
+const Texture* Widget::getTexture() const
+{
+	return texture_;
+}
+
+void Widget::resetTexture()
+{
+	texture_ = nullptr;
+}
+
+void Widget::draw(ShaderPack& shaderPack)
+{
+	auto& shader = shaderPack["widget"];
+	shader.use();
+
+	if (texture_)
+	{
+		texture_->bind();
+		if (isDirtyTexture_)
+		{
+			texture_->loadToGpu();
+			isDirtyTexture_ = false;
+		}
+	}
+	if (!vao_.isGenerated())
+	{
+		vao_.generate();
+	}
+	if (!vbo_.isGenerated())
+	{
+		vbo_.generate();
+	}
+
+	vao_.bind();
+
+	if (isDirtyVertices_)
+	{
+		auto vertices = verticesTemplate_;
+		vertices[1].position.x *= size_.width;
+		vertices[2].position.x *= size_.width;
+		vertices[2].position.y *= size_.height;
+		vertices[4].position.x *= size_.width;
+		vertices[4].position.y *= size_.height;
+		vertices[5].position.y *= size_.height;
+
+		vbo_.bind();
+		vbo_.data(vertices);
+		isDirtyVertices_ = false;
+	}
+
+	Gl::Vao::vertexAttribPointer(1, 2, Gl::Type::Float, false, 4 * sizeof(float), nullptr);
+	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 4 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
+
+	static glm::mat4 proj = glm::ortho(0.0f, static_cast<float>(GetWindow().getSize().width), 0.0f,
+		static_cast<float>(GetWindow().getSize().height), 0.1f, 1000.0f);
+	
+	shader.uniform("uProjection", false, proj);
+
+	Gl::drawArrays(GL_TRIANGLES, 0, verticesTemplate_.size());
+}
+
+void Widget::setSize(Utils::FSize2D size)
+{
+	size_ = size;
+	isDirtyVertices_ = true;
+}
+
+Utils::FSize2D Widget::getSize() const
+{
+	return size_;
+}

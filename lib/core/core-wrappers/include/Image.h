@@ -46,7 +46,7 @@ public:
 	[[nodiscard]] static std::string channelToString(Channel channel);
 	[[nodiscard]] static GLenum convertChannelToGlChannel(Channel channel);
 
-	explicit Image(std::filesystem::path&& path = "");
+	explicit Image(std::filesystem::path&& path = "", Gl::Texture::Channel channel = Gl::Texture::Channel::SRGB);
 
 	Image(Image&& obj) noexcept;
 	Image& operator=(Image&& obj) noexcept;
