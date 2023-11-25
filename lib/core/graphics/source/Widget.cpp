@@ -26,6 +26,7 @@
 #include "Texture.h"
 #include "Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/matrix_transform.hpp"
 
 void Widget::setTexture(Texture& texture)
 {
@@ -91,10 +92,14 @@ void Widget::draw(ShaderPack& shaderPack)
 	Gl::Vao::vertexAttribPointer(1, 2, Gl::Type::Float, false, 4 * sizeof(float), nullptr);
 	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 4 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
 
-	static glm::mat4 proj = glm::ortho(0.0f, static_cast<float>(GetWindow().getSize().width), 0.0f,
+	glm::mat4 proj = glm::ortho(0.0f, static_cast<float>(GetWindow().getSize().width), 0.0f,
 		static_cast<float>(GetWindow().getSize().height), 0.1f, 1000.0f);
-	
+
+	glm::mat4 model = glm::mat4(1.f);
+	model = glm::translate(model, glm::vec3(position_, 0.f));
+
 	shader.uniform("uProjection", false, proj);
+	shader.uniform("uModel", false, model);
 
 	Gl::drawArrays(GL_TRIANGLES, 0, verticesTemplate_.size());
 }
@@ -108,4 +113,24 @@ void Widget::setSize(Utils::FSize2D size)
 Utils::FSize2D Widget::getSize() const
 {
 	return size_;
+}
+
+Widget::Widget(Texture& texture)
+{
+	setTexture(texture);
+}
+
+void Widget::setPosition(glm::vec2 position)
+{
+	position_ = position;
+}
+
+glm::vec2 Widget::getPosition() const
+{
+	return position_;
+}
+
+void Widget::move(glm::vec2 offset)
+{
+	position_ += offset;
 }

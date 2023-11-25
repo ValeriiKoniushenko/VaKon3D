@@ -32,6 +32,9 @@ class ShaderPack;
 class Widget
 {
 public:
+	Widget() = default;
+	explicit Widget(Texture& texture);
+
 	void setTexture(Texture& texture);
 	[[nodiscard]] Texture* getTexture();
 	[[nodiscard]] const Texture* getTexture() const;
@@ -40,6 +43,10 @@ public:
 	void setSize(Utils::FSize2D size);
 	[[nodiscard]] Utils::FSize2D getSize() const;
 
+	void setPosition(glm::vec2 position);
+	void move(glm::vec2 offset);
+	glm::vec2 getPosition() const;
+
 	void draw(ShaderPack& shaderPack);
 
 private:
@@ -47,6 +54,7 @@ private:
 	Vao vao_;
 	WidgetVbo vbo_;
 	Utils::FSize2D size_ = {100.f, 100.f};
+	glm::vec2 position_{};
 	bool isDirtyVertices_ = true;
 	bool isDirtyTexture_ = true;
 

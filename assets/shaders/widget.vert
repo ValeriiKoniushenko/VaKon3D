@@ -6,9 +6,10 @@ layout (location = 2) in vec2 aUv;
 out vec2 ioUv;
 
 uniform mat4 uProjection;
+uniform mat4 uModel;
 
 void main()
 {
     ioUv = aUv;
-    gl_Position = uProjection * vec4(aPosition.x, aPosition.y, -1, 1);
+    gl_Position = uProjection * uModel * vec4(aPosition.x, aPosition.y, -1, 1);
 }
