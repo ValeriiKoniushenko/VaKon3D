@@ -76,6 +76,6 @@ private:
 	bool isDestroyAtEnd_ = true;
 	Image* image_{};
 	bool ignoreMipMap_ = false;
-	Gl::Texture::MagFilter magFilter_ = Gl::Texture::MagFilter::None;
-	Gl::Texture::MinFilter minFilter_ = Gl::Texture::MinFilter::None;
+	Gl::Texture::MagFilter magFilter_ = Gl::Texture::MagFilter::Linear;
+	Gl::Texture::MinFilter minFilter_ = Gl::Texture::MinFilter::LinearMipmapLinear;
 };
