@@ -53,12 +53,16 @@ public:
 
 	void draw(ShaderPack& shaderPack);
 
+	void setOrigin(glm::vec2 origin);
+	[[nodiscard]] glm::vec2 getOrigin() const;
+
 private:
 	Texture* texture_ = nullptr;
 	Vao vao_;
 	WidgetVbo vbo_;
 	Utils::FSize2D size_ = {100.f, 100.f};
 	glm::vec2 position_{};
+	glm::vec2 origin_{};
 	float rotate_{};
 	bool isDirtyVertices_ = true;
 	bool isDirtyTexture_ = true;
