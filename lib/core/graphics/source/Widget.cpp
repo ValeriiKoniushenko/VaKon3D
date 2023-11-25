@@ -97,6 +97,7 @@ void Widget::draw(ShaderPack& shaderPack)
 
 	glm::mat4 model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(position_, 0.f));
+	model = glm::rotate(model, glm::radians(rotate_), glm::vec3(0.f, 0.f, 1.f));
 
 	shader.uniform("uProjection", false, proj);
 	shader.uniform("uModel", false, model);
@@ -133,4 +134,19 @@ glm::vec2 Widget::getPosition() const
 void Widget::move(glm::vec2 offset)
 {
 	position_ += offset;
+}
+
+void Widget::setRotate(float degrees)
+{
+	rotate_ = degrees;
+}
+
+float Widget::getRotate() const
+{
+	return rotate_;
+}
+
+void Widget::rotate(float degrees)
+{
+	rotate_ += degrees;
 }

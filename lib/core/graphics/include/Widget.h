@@ -45,7 +45,11 @@ public:
 
 	void setPosition(glm::vec2 position);
 	void move(glm::vec2 offset);
-	glm::vec2 getPosition() const;
+	[[nodiscard]] glm::vec2 getPosition() const;
+
+	void setRotate(float degrees);
+	[[nodiscard]] float getRotate() const;
+	void rotate(float degrees);
 
 	void draw(ShaderPack& shaderPack);
 
@@ -55,6 +59,7 @@ private:
 	WidgetVbo vbo_;
 	Utils::FSize2D size_ = {100.f, 100.f};
 	glm::vec2 position_{};
+	float rotate_{};
 	bool isDirtyVertices_ = true;
 	bool isDirtyTexture_ = true;
 
