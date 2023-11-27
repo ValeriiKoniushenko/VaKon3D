@@ -8,6 +8,5 @@ uniform sampler2D uTexture;
 
 void main()
 {
-    vec4 outColor = texture(uTexture, ioUv);
-    oColor = outColor;
+    oColor = vec4(1, 0, 0, 1);//texture(uTexture, ioUv);
 }

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Widget.h"
+#include "Triangle.h"
 
 #include "ShaderPack.h"
 #include "Texture.h"
@@ -28,34 +28,15 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
-void Widget::setTexture(Texture& texture)
+Triangle::Triangle(Texture& texture)
 {
 	texture_ = &texture;
-	isDirtyTexture_ = true;
 }
 
-Texture* Widget::getTexture()
+void Triangle::draw(ShaderPack& shaderPack)
 {
-	return texture_;
-}
-
-const Texture* Widget::getTexture() const
-{
-	return texture_;
-}
-
-void Widget::resetTexture()
-{
-	texture_ = nullptr;
-}
-
-void Widget::draw(ShaderPack& shaderPack)
-{
-	auto& shader = shaderPack["widget"];
+	auto& shader = shaderPack["triangle"];
 	shader.use();
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	if (texture_)
 	{
@@ -84,90 +65,106 @@ void Widget::draw(ShaderPack& shaderPack)
 		vertices[1].position.x *= size_.width;
 		vertices[2].position.x *= size_.width;
 		vertices[2].position.y *= size_.height;
-		vertices[4].position.x *= size_.width;
-		vertices[4].position.y *= size_.height;
-		vertices[5].position.y *= size_.height;
 
 		vbo_.bind();
 		vbo_.data(vertices);
 		isDirtyVertices_ = false;
 	}
 
-	Gl::Vao::vertexAttribPointer(1, 2, Gl::Type::Float, false, 4 * sizeof(float), nullptr);
-	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 4 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 8 * sizeof(float), nullptr);
+	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
 
-	glm::mat4 proj = glm::ortho(0.0f, static_cast<float>(GetWindow().getSize().width), 0.0f,
-		static_cast<float>(GetWindow().getSize().height), 0.1f, 1000.0f);
+	const glm::mat4 proj = glm::perspective(glm::radians(190.0f),
+		static_cast<float>(GetWindow().getSize().width) / static_cast<float>(GetWindow().getSize().height), 0.1f, 10000.0f);
 
 	glm::mat4 model = glm::mat4(1.f);
-	model = glm::translate(model, glm::vec3(position_, 0.f));
+	auto pos = position_;
+	pos.x = -pos.x;
+	pos.y = -pos.y;
+
+	model = glm::translate(model, pos);
 	model = glm::rotate(model, glm::radians(rotate_), glm::vec3(0.f, 0.f, 1.f));
-	model = glm::translate(model, glm::vec3(origin_, 0.f));
+	model = glm::translate(model, origin_);
+
+	glm::mat4 view = glm::mat4(1.f);
+	view = glm::translate(view, glm::vec3(0, 0, 0.f));
 
 	shader.uniform("uProjection", false, proj);
 	shader.uniform("uModel", false, model);
+	shader.uniform("uView", false, view);
 
 	Gl::drawArrays(GL_TRIANGLES, 0, verticesTemplate_.size());
-
-	glDisable(GL_BLEND);
 }
 
-void Widget::setSize(Utils::FSize2D size)
+void Triangle::setTexture(Texture& texture)
+{
+	texture_ = &texture;
+	isDirtyTexture_ = true;
+}
+
+Texture* Triangle::getTexture()
+{
+	return texture_;
+}
+
+const Texture* Triangle::getTexture() const
+{
+	return texture_;
+}
+
+void Triangle::resetTexture()
+{
+	texture_ = nullptr;
+}
+
+void Triangle::setSize(Utils::FSize2D size)
 {
 	size_ = size;
 	isDirtyVertices_ = true;
 }
 
-Utils::FSize2D Widget::getSize() const
+Utils::FSize2D Triangle::getSize() const
 {
 	return size_;
 }
 
-Widget::Widget(Texture& texture)
-{
-	setTexture(texture);
-}
-
-void Widget::setPosition(glm::vec2 position)
+void Triangle::setPosition(glm::vec3 position)
 {
 	position_ = position;
 }
 
-glm::vec2 Widget::getPosition() const
-{
-	return position_;
-}
-
-void Widget::move(glm::vec2 offset)
+void Triangle::move(glm::vec3 offset)
 {
 	position_ += offset;
 }
 
-void Widget::setRotate(float degrees)
+glm::vec3 Triangle::getPosition() const
+{
+	return position_;
+}
+
+void Triangle::setRotate(float degrees)
 {
 	rotate_ = degrees;
 }
 
-float Widget::getRotate() const
+float Triangle::getRotate() const
 {
 	return rotate_;
 }
 
-void Widget::rotate(float degrees)
+void Triangle::rotate(float degrees)
 {
 	rotate_ += degrees;
-	while (rotate_ >= 360.f)
-	{
-		rotate_ -= 360.f;
-	}
 }
 
-void Widget::setOrigin(glm::vec2 origin)
+void Triangle::setOrigin(glm::vec3 origin)
 {
-	origin_ = origin;
+	origin_ += origin;
 }
 
-glm::vec2 Widget::getOrigin() const
+glm::vec3 Triangle::getOrigin() const
 {
 	return origin_;
 }
