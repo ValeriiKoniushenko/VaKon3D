@@ -31,9 +31,12 @@ public:
 	void setPosition(const glm::vec3& position);
 	[[nodiscard]] const glm::vec3& getPosition() const;
 	[[nodiscard]] glm::vec3& getPosition();
-	void move(const glm::vec3& offset);
+	void moveForward(float offset);
+	void moveRight(float offset);
+	void moveUp(float offset);
 
-	void setRotation(const glm::vec2& rotation);
+	void setRotation(glm::vec2 rotation);
+	void rotate(glm::vec2 value);
 	[[nodiscard]] const glm::vec2& getRotation() const;
 	[[nodiscard]] glm::vec2& getRotation();
 	void setRotationX(float x);
@@ -54,10 +57,17 @@ public:
 	void setFar(float value);
 	[[nodiscard]] float getFar() const;
 
-private:
-	void recalculateMatrices();
+	void setSensitive(glm::vec2 value);
+	[[nodiscard]] glm::vec2 getSensitive() const;
 
 private:
+	void recalculateMatrices();
+	[[nodiscard]] glm::vec3 getForwardVector() const;
+	[[nodiscard]] glm::vec3 getUpVector() const;
+	[[nodiscard]] glm::vec3 getRightVector() const;
+
+private:
+	glm::vec2 sensitive_{2.f, 2.f};
 	glm::mat4 cachedViewMatrix_ = glm::mat4(1.f);
 	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);
 	float fov_ = 90.f;

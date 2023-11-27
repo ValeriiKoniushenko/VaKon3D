@@ -26,8 +26,10 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Updateable.h"
+#include "Window.h"
 
 #include <chrono>
+#include <optional>
 #include <string>
 
 template <class KeyT>
@@ -43,7 +45,11 @@ private:
 public:
 	using TimeT = std::chrono::milliseconds;
 
-	explicit InputAction(const std::string& name, KeyT key) : name_(name), key_(key)
+	InputAction(const std::string& name, KeyT key) : name_(name), key_(key)
+	{
+	}
+
+	explicit InputAction(const std::string& name) : name_(name)
 	{
 	}
 
@@ -69,21 +75,24 @@ public:
 
 	void update() override
 	{
-		if (isKeyPressed())
+		if (key_)
 		{
-			if (lastState_ != State::Pressed || isRepeatable_)
+			if (isKeyPressed())
 			{
-				if (std::chrono::duration_cast<TimeT>(std::chrono::system_clock::now() - lastUpdate_) >= frequency_)
+				if (lastState_ != State::Pressed || isRepeatable_)
 				{
-					onAction.trigger();
-					lastUpdate_ = std::chrono::system_clock::now();
-					lastState_ = State::Pressed;
+					if (std::chrono::duration_cast<TimeT>(std::chrono::system_clock::now() - lastUpdate_) >= frequency_)
+					{
+						onAction.trigger();
+						lastUpdate_ = std::chrono::system_clock::now();
+						lastState_ = State::Pressed;
+					}
 				}
 			}
-		}
-		else
-		{
-			lastState_ = State::None;
+			else
+			{
+				lastState_ = State::None;
+			}
 		}
 	}
 
@@ -114,8 +123,8 @@ protected:
 
 protected:
 	std::string name_;
-	KeyT key_{};
-	TimeT frequency_ = TimeT(50);
+	std::optional<KeyT> key_{};
+	TimeT frequency_ = TimeT(1);
 	std::chrono::system_clock::time_point lastUpdate_{};
 	State lastState_ = State::None;
 	bool isRepeatable_ = true;
@@ -124,7 +133,7 @@ protected:
 class KeyboardInputAction : public InputAction<Keyboard::Key>
 {
 public:
-	explicit KeyboardInputAction(const std::string& name, Keyboard::Key key);
+	KeyboardInputAction(const std::string& name, Keyboard::Key key);
 
 protected:
 	[[nodiscard]] bool isKeyPressed() const override;
@@ -133,8 +142,16 @@ protected:
 class MouseInputAction : public InputAction<Mouse::Key>
 {
 public:
-	explicit MouseInputAction(const std::string& name, Mouse::Key key);
+	MouseInputAction(const std::string& name, Mouse::Key key);
+	explicit MouseInputAction(const std::string& name);
+
+	LambdaMulticastDelegate<void(glm::ivec2)> onMove;
+
+	void update() override;
 
 protected:
 	[[nodiscard]] bool isKeyPressed() const override;
+
+private:
+	glm::ivec2 lastMousePosition_ = Mouse::getPosition(GetWindow());
 };

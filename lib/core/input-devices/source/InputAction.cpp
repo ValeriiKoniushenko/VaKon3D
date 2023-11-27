@@ -28,7 +28,11 @@ KeyboardInputAction::KeyboardInputAction(const std::string& name, Keyboard::Key 
 
 bool KeyboardInputAction::isKeyPressed() const
 {
-	return Keyboard::isKeyPressed(key_);
+	if (key_)
+	{
+		return Keyboard::isKeyPressed(key_.value());
+	}
+	return false;
 }
 
 MouseInputAction::MouseInputAction(const std::string& name, Mouse::Key key) : InputAction(name, key)
@@ -37,5 +41,24 @@ MouseInputAction::MouseInputAction(const std::string& name, Mouse::Key key) : In
 
 bool MouseInputAction::isKeyPressed() const
 {
-	return Mouse::isKeyPressed(key_);
+	if (key_)
+	{
+		return Mouse::isKeyPressed(key_.value());
+	}
+	return false;
+}
+
+MouseInputAction::MouseInputAction(const std::string& name) : InputAction(name)
+{
+}
+
+void MouseInputAction::update()
+{
+	InputAction::update();
+
+	if (Mouse::getPosition(GetWindow()) != lastMousePosition_)
+	{
+		onMove.trigger(Mouse::getPosition(GetWindow()) - lastMousePosition_);
+		lastMousePosition_ = Mouse::getPosition(GetWindow());
+	}
 }

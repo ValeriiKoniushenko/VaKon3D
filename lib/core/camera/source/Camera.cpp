@@ -43,13 +43,25 @@ glm::vec3& Camera::getPosition()
 	return position_;
 }
 
-void Camera::move(const glm::vec3& offset)
+void Camera::moveForward(float offset)
 {
-	position_ += offset;
+	position_ += offset * getForwardVector();
 	matrixIsDirty_ = true;
 }
 
-void Camera::setRotation(const glm::vec2& rotation)
+void Camera::moveRight(float offset)
+{
+	position_ += offset * getRightVector();
+	matrixIsDirty_ = true;
+}
+
+void Camera::moveUp(float offset)
+{
+	position_ += offset * getUpVector();
+	matrixIsDirty_ = true;
+}
+
+void Camera::setRotation(glm::vec2 rotation)
 {
 	rotation_ = rotation;
 	matrixIsDirty_ = true;
@@ -61,6 +73,25 @@ void Camera::setRotation(const glm::vec2& rotation)
 	{
 		rotation_.y -= 360.f;
 	}
+}
+
+void Camera::rotate(glm::vec2 value)
+{
+	value /= sensitive_;
+
+	rotation_.y += value.x;
+	rotation_.x += value.y;
+
+	while (rotation_.x >= 360.f)
+	{
+		rotation_.x -= 360.f;
+	}
+	while (rotation_.y >= 360.f)
+	{
+		rotation_.y -= 360.f;
+	}
+
+	matrixIsDirty_ = true;
 }
 
 const glm::vec2& Camera::getRotation() const
@@ -159,6 +190,16 @@ float Camera::getFar() const
 	return far_;
 }
 
+void Camera::setSensitive(glm::vec2 value)
+{
+	sensitive_ = value;
+}
+
+glm::vec2 Camera::getSensitive() const
+{
+	return sensitive_;
+}
+
 void Camera::recalculateMatrices()
 {
 	auto windowSize = GetWindow().getSize();
@@ -176,13 +217,36 @@ void Camera::recalculateMatrices()
 	{
 		cachedViewMatrix_ = glm::mat4(1.f);
 
-		cachedViewMatrix_ = glm::translate(cachedViewMatrix_, {-position_.x, -position_.y, position_.z});
-
 		cachedViewMatrix_ = glm::rotate(cachedViewMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
 		cachedViewMatrix_ = glm::rotate(cachedViewMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+		cachedViewMatrix_ = glm::rotate(cachedViewMatrix_, glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f));
+
+		cachedViewMatrix_ = glm::translate(cachedViewMatrix_, {position_.x, position_.y, position_.z});
 
 		cachedCalculatedMatrix_ = cachedProjMatrix_ * cachedViewMatrix_;
 
 		matrixIsDirty_ = false;
 	}
+}
+
+glm::vec3 Camera::getForwardVector() const
+{
+	const auto& r = rotation_;
+	// clang-format off
+	return {
+		cos(glm::radians(r.y)) * cos(glm::radians(r.x)),
+		sin(glm::radians(r.x)),
+		sin(glm::radians(r.y)) * cos(glm::radians(r.x))
+	};
+	// clang-format on
+}
+
+glm::vec3 Camera::getUpVector() const
+{
+	return {0.f, 1.f, 0.f};
+}
+
+glm::vec3 Camera::getRightVector() const
+{
+	return glm::cross(getForwardVector(), getUpVector());
 }
