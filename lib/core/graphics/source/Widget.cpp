@@ -54,9 +54,6 @@ void Widget::draw(ShaderPack& shaderPack)
 	auto& shader = shaderPack["widget"];
 	shader.use();
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	if (texture_)
 	{
 		texture_->bind();

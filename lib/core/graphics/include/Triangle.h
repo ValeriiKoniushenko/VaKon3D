@@ -26,13 +26,9 @@
 #include "TriangleVbo.h"
 #include "Vao.h"
 
-class Texture;
+class Camera;
 class ShaderPack;
-
-enum class Axis
-{
-
-};
+class Texture;
 
 class Triangle
 {
@@ -42,16 +38,12 @@ public:
 	Triangle() = default;
 	explicit Triangle(Texture& texture);
 
-	void draw(ShaderPack& shaderPack, const glm::mat4& proj, const glm::mat4& view, const glm::mat4& model);
+	void draw(ShaderPack& shaderPack, Camera& camera, const glm::mat4& model);
 
 	void setTexture(Texture& texture);
 	[[nodiscard]] Texture* getTexture();
 	[[nodiscard]] const Texture* getTexture() const;
 	void resetTexture();
-
-	void setPosition(glm::vec3 position);
-	void move(glm::vec3 offset);
-	[[nodiscard]] glm::vec3 getPosition() const;
 
 	void setVertices(std::vector<TriangleVbo::Unit> vertices);
 
@@ -59,7 +51,6 @@ private:
 	Texture* texture_ = nullptr;
 	Vao vao_;
 	TriangleVbo vbo_;
-	glm::vec3 position_{};
 	std::vector<TriangleVbo::Unit> vertices_;
 	bool isDirtyVertices_ = true;
 	bool isDirtyTexture_ = true;

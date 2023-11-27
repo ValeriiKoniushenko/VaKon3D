@@ -22,6 +22,7 @@
 
 #include "Triangle.h"
 
+#include "Camera.h"
 #include "ShaderPack.h"
 #include "Texture.h"
 #include "Window.h"
@@ -31,7 +32,7 @@ Triangle::Triangle(Texture& texture)
 	texture_ = &texture;
 }
 
-void Triangle::draw(ShaderPack& shaderPack, const glm::mat4& proj, const glm::mat4& view, const glm::mat4& model)
+void Triangle::draw(ShaderPack& shaderPack, Camera& camera, const glm::mat4& model)
 {
 	auto& shader = shaderPack["triangle"];
 	shader.use();
@@ -72,9 +73,8 @@ void Triangle::draw(ShaderPack& shaderPack, const glm::mat4& proj, const glm::ma
 	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
 
-	shader.uniform("uProjection", false, proj);
+	shader.uniform("uProjectionAndView", false, camera.getMatrix());
 	shader.uniform("uModel", false, model);
-	shader.uniform("uView", false, view);
 
 	Gl::drawArrays(GL_TRIANGLES, 0, verticesCount);
 }
@@ -98,21 +98,6 @@ const Texture* Triangle::getTexture() const
 void Triangle::resetTexture()
 {
 	texture_ = nullptr;
-}
-
-void Triangle::setPosition(glm::vec3 position)
-{
-	position_ = position;
-}
-
-void Triangle::move(glm::vec3 offset)
-{
-	position_ += offset;
-}
-
-glm::vec3 Triangle::getPosition() const
-{
-	return position_;
 }
 
 void Triangle::setVertices(std::vector<TriangleVbo::Unit> vertices)

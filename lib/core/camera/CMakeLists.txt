@@ -5,17 +5,17 @@ file(
 )
 
 add_library(
-	Graphics STATIC
+	Camera STATIC
 	${Sources}
 )
 
 target_include_directories(
-	Graphics PUBLIC
+	Camera PUBLIC
 	include
 )
 
 target_link_libraries(
-	Graphics PUBLIC
+	Camera PUBLIC
 	Utils
 	glfw
 	Glad
@@ -25,5 +25,4 @@ target_link_libraries(
 	Window
 	Boost
 	FreeType-Wrapper
-	Camera
 )
