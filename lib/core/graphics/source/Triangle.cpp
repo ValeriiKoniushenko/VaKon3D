@@ -25,15 +25,13 @@
 #include "ShaderPack.h"
 #include "Texture.h"
 #include "Window.h"
-#include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
 
 Triangle::Triangle(Texture& texture)
 {
 	texture_ = &texture;
 }
 
-void Triangle::draw(ShaderPack& shaderPack)
+void Triangle::draw(ShaderPack& shaderPack, const glm::mat4& proj, const glm::mat4& view, const glm::mat4& model)
 {
 	auto& shader = shaderPack["triangle"];
 	shader.use();
@@ -61,13 +59,12 @@ void Triangle::draw(ShaderPack& shaderPack)
 
 	if (isDirtyVertices_)
 	{
-		auto vertices = verticesTemplate_;
-		vertices[1].position.x *= size_.width;
-		vertices[2].position.x *= size_.width;
-		vertices[2].position.y *= size_.height;
-
+		if (vertices_.empty())
+		{
+			throw std::runtime_error("Impossible to load to the GPU zero data. At first set vertices");
+		}
 		vbo_.bind();
-		vbo_.data(vertices);
+		vbo_.data(vertices_);
 		isDirtyVertices_ = false;
 	}
 
@@ -75,26 +72,11 @@ void Triangle::draw(ShaderPack& shaderPack)
 	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
 
-	const glm::mat4 proj = glm::perspective(glm::radians(190.0f),
-		static_cast<float>(GetWindow().getSize().width) / static_cast<float>(GetWindow().getSize().height), 0.1f, 10000.0f);
-
-	glm::mat4 model = glm::mat4(1.f);
-	auto pos = position_;
-	pos.x = -pos.x;
-	pos.y = -pos.y;
-
-	model = glm::translate(model, pos);
-	model = glm::rotate(model, glm::radians(rotate_), glm::vec3(0.f, 0.f, 1.f));
-	model = glm::translate(model, origin_);
-
-	glm::mat4 view = glm::mat4(1.f);
-	view = glm::translate(view, glm::vec3(0, 0, 0.f));
-
 	shader.uniform("uProjection", false, proj);
 	shader.uniform("uModel", false, model);
 	shader.uniform("uView", false, view);
 
-	Gl::drawArrays(GL_TRIANGLES, 0, verticesTemplate_.size());
+	Gl::drawArrays(GL_TRIANGLES, 0, verticesCount);
 }
 
 void Triangle::setTexture(Texture& texture)
@@ -118,17 +100,6 @@ void Triangle::resetTexture()
 	texture_ = nullptr;
 }
 
-void Triangle::setSize(Utils::FSize2D size)
-{
-	size_ = size;
-	isDirtyVertices_ = true;
-}
-
-Utils::FSize2D Triangle::getSize() const
-{
-	return size_;
-}
-
 void Triangle::setPosition(glm::vec3 position)
 {
 	position_ = position;
@@ -144,27 +115,12 @@ glm::vec3 Triangle::getPosition() const
 	return position_;
 }
 
-void Triangle::setRotate(float degrees)
+void Triangle::setVertices(std::vector<TriangleVbo::Unit> vertices)
 {
-	rotate_ = degrees;
-}
-
-float Triangle::getRotate() const
-{
-	return rotate_;
-}
-
-void Triangle::rotate(float degrees)
-{
-	rotate_ += degrees;
-}
-
-void Triangle::setOrigin(glm::vec3 origin)
-{
-	origin_ += origin;
-}
-
-glm::vec3 Triangle::getOrigin() const
-{
-	return origin_;
+	if (vertices.size() != Triangle::verticesCount)
+	{
+		throw std::runtime_error("Impossible to set vertices. The vertices count must be equal to three");
+	}
+	vertices_ = std::move(vertices);
+	isDirtyVertices_ = true;
 }

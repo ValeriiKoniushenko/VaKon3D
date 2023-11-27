@@ -29,49 +29,38 @@
 class Texture;
 class ShaderPack;
 
+enum class Axis
+{
+
+};
+
 class Triangle
 {
 public:
+	const inline static GLsizei verticesCount = 3;
+
 	Triangle() = default;
 	explicit Triangle(Texture& texture);
 
-	void draw(ShaderPack& shaderPack);
+	void draw(ShaderPack& shaderPack, const glm::mat4& proj, const glm::mat4& view, const glm::mat4& model);
 
 	void setTexture(Texture& texture);
 	[[nodiscard]] Texture* getTexture();
 	[[nodiscard]] const Texture* getTexture() const;
 	void resetTexture();
 
-	void setSize(Utils::FSize2D size);
-	[[nodiscard]] Utils::FSize2D getSize() const;
-
 	void setPosition(glm::vec3 position);
 	void move(glm::vec3 offset);
 	[[nodiscard]] glm::vec3 getPosition() const;
 
-	void setRotate(float degrees);
-	[[nodiscard]] float getRotate() const;
-	void rotate(float degrees);
-
-	void setOrigin(glm::vec3 origin);
-	[[nodiscard]] glm::vec3 getOrigin() const;
+	void setVertices(std::vector<TriangleVbo::Unit> vertices);
 
 private:
 	Texture* texture_ = nullptr;
 	Vao vao_;
 	TriangleVbo vbo_;
-	Utils::FSize2D size_ = {100.f, 100.f};
 	glm::vec3 position_{};
-	glm::vec3 origin_{};
-	float rotate_{};
+	std::vector<TriangleVbo::Unit> vertices_;
 	bool isDirtyVertices_ = true;
 	bool isDirtyTexture_ = true;
-
-	// clang-format off
-	const inline static std::vector<TriangleVbo::Unit> verticesTemplate_ = {
-		{ {0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, 0.f, 1.f} },
-		{ {1.f, 0.f, 0.f}, {1.f, 0.f}, {0.f, 0.f, 1.f} },
-		{ {1.f, 1.f, 0.f}, {1.f, 1.f}, {1.f, 0.f, 1.f} }
-	};
-	// clang-format on
 };
