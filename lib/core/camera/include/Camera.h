@@ -54,13 +54,12 @@ public:
 	void setFar(float value);
 	[[nodiscard]] float getFar() const;
 
-	glm::mat4 cachedViewMatrix_ = glm::mat4(1.f);
-	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);
-
 private:
 	void recalculateMatrices();
 
 private:
+	glm::mat4 cachedViewMatrix_ = glm::mat4(1.f);
+	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);
 	float fov_ = 90.f;
 	float far_ = 10'000.f;
 	float near_ = 0.001f;

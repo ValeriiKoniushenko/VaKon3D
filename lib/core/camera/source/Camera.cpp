@@ -176,7 +176,7 @@ void Camera::recalculateMatrices()
 	{
 		cachedViewMatrix_ = glm::mat4(1.f);
 
-		cachedViewMatrix_ = glm::translate(cachedViewMatrix_, position_);
+		cachedViewMatrix_ = glm::translate(cachedViewMatrix_, {-position_.x, -position_.y, position_.z});
 
 		cachedViewMatrix_ = glm::rotate(cachedViewMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
 		cachedViewMatrix_ = glm::rotate(cachedViewMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
