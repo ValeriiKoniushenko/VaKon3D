@@ -42,6 +42,7 @@ public:
 	void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 	[[nodiscard]] HWND getHwnd();
 	[[nodiscard]] Utils::ISize2D getSize() const;
+	void setCursorPosition(double xpos, double ypos);
 
 	LambdaMulticastDelegate<void(int, int, int, int)> onKeyPressed;
 	LambdaMulticastDelegate<void(unsigned int)> onTextInput;

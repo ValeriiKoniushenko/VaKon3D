@@ -114,6 +114,11 @@ Utils::ISize2D Window::getSize() const
 	return size_;
 }
 
+void Window::setCursorPosition(double xpos, double ypos)
+{
+	glfwSetCursorPos(window, xpos, ypos);
+}
+
 Window& GetWindow()
 {
 	return Window::instance();
