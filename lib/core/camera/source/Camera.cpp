@@ -65,10 +65,15 @@ void Camera::setRotation(glm::vec2 rotation)
 {
 	rotation_ = rotation;
 	matrixIsDirty_ = true;
-	while (rotation_.x >= 360.f)
+	if (rotation_.x > maxPitch)
 	{
-		rotation_.x -= 360.f;
+		rotation_.x = maxPitch;
 	}
+	if (rotation_.x < -maxPitch)
+	{
+		rotation_.x = -maxPitch;
+	}
+
 	while (rotation_.y >= 360.f)
 	{
 		rotation_.y -= 360.f;
@@ -82,10 +87,15 @@ void Camera::rotate(glm::vec2 value)
 	rotation_.y += value.x;
 	rotation_.x += value.y;
 
-	while (rotation_.x >= 360.f)
+	if (rotation_.x > maxPitch)
 	{
-		rotation_.x -= 360.f;
+		rotation_.x = maxPitch;
 	}
+	if (rotation_.x < -maxPitch)
+	{
+		rotation_.x = -maxPitch;
+	}
+
 	while (rotation_.y >= 360.f)
 	{
 		rotation_.y -= 360.f;
@@ -108,9 +118,13 @@ void Camera::setRotationX(float x)
 {
 	rotation_.x = x;
 	matrixIsDirty_ = true;
-	while (rotation_.x >= 360.f)
+	if (rotation_.x > maxPitch)
 	{
-		rotation_.x -= 360.f;
+		rotation_.x = maxPitch;
+	}
+	if (rotation_.x < -maxPitch)
+	{
+		rotation_.x = -maxPitch;
 	}
 }
 
@@ -200,6 +214,16 @@ glm::vec2 Camera::getSensitive() const
 	return sensitive_;
 }
 
+void Camera::setMaxPitch(float value)
+{
+	maxPitch = value;
+}
+
+float Camera::getMaxPitch() const
+{
+	return maxPitch;
+}
+
 void Camera::recalculateMatrices()
 {
 	auto windowSize = GetWindow().getSize();
@@ -221,7 +245,7 @@ void Camera::recalculateMatrices()
 		cachedViewMatrix_ = glm::rotate(cachedViewMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
 		cachedViewMatrix_ = glm::rotate(cachedViewMatrix_, glm::radians(-90.f), glm::vec3(0.f, 1.f, 0.f));
 
-		cachedViewMatrix_ = glm::translate(cachedViewMatrix_, {position_.x, position_.y, position_.z});
+		cachedViewMatrix_ = glm::translate(cachedViewMatrix_, position_);
 
 		cachedCalculatedMatrix_ = cachedProjMatrix_ * cachedViewMatrix_;
 

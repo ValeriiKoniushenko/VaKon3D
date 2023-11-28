@@ -60,6 +60,9 @@ public:
 	void setSensitive(glm::vec2 value);
 	[[nodiscard]] glm::vec2 getSensitive() const;
 
+	void setMaxPitch(float value);
+	[[nodiscard]] float getMaxPitch() const;
+
 private:
 	void recalculateMatrices();
 	[[nodiscard]] glm::vec3 getForwardVector() const;
@@ -67,6 +70,7 @@ private:
 	[[nodiscard]] glm::vec3 getRightVector() const;
 
 private:
+	float maxPitch = 90.f;
 	glm::vec2 sensitive_{2.f, 2.f};
 	glm::mat4 cachedViewMatrix_ = glm::mat4(1.f);
 	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);
