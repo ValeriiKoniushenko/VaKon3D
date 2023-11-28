@@ -24,6 +24,8 @@
 
 #include "glm/gtx/transform.hpp"
 
+#include <algorithm>
+
 void SceneObject::setPosition(const glm::vec3& position)
 {
 	position_ = position;
@@ -232,23 +234,33 @@ void SceneObject::recalculateMatrices()
 
 void SceneObject::addImpulseForward(float value)
 {
-	impulse_.z += value;
+	impulse_.z += value / mass_;
 }
 
 void SceneObject::addImpulseRight(float value)
 {
-	impulse_.x += value;
+	impulse_.x += value / mass_;
 }
 
 void SceneObject::addImpulseUp(float value)
 {
-	impulse_.y += value;
+	impulse_.y += value / mass_;
 }
 
 void SceneObject::update()
 {
-	impulse_ *= 0.999f;
+	impulse_ *= airResistance;
 	moveForward(impulse_.z);
 	moveRight(impulse_.x);
 	moveUp(impulse_.y);
+}
+
+void SceneObject::setMass(float mass)
+{
+	mass_ = std::clamp(mass, SceneObject::minMass, SceneObject::maxMass);
+}
+
+float SceneObject::getMass() const
+{
+	return mass_;
 }

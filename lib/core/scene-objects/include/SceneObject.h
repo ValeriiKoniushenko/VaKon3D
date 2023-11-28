@@ -30,6 +30,10 @@
 class SceneObject : public JsonPrintable, public Updateable
 {
 public:
+	inline static const float minMass = 0.0001f;
+	inline static const float maxMass = 16'000'000.f;
+	inline static const float airResistance = 0.999f;
+
 	/** brief: working in global coordinates */
 	virtual void setPosition(const glm::vec3& position);
 
@@ -77,12 +81,16 @@ public:
 
 	void update() override;
 
+	void setMass(float mass);
+	[[nodiscard]] float getMass() const;
+
 protected:
 	void recalculateMatrices();
 
 	LambdaMulticastDelegate<void()> onRecalculateMatrices;
 
 protected:
+	float mass_ = 1000.f;
 	glm::vec3 impulse_{};
 	float maxPitch = 90.f;
 	glm::vec3 position_{0.f, 0.f, -100.f};
