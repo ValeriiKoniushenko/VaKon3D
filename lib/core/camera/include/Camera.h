@@ -22,29 +22,14 @@
 
 #pragma once
 
-#include "NotCopyableButMovable.h"
-#include "glm/glm.hpp"
+#include "SceneObject.h"
 
-class Camera : public Utils::NotCopyableButMovable
+class Camera : public SceneObject
 {
 public:
-	void setPosition(const glm::vec3& position);
-	[[nodiscard]] const glm::vec3& getPosition() const;
-	[[nodiscard]] glm::vec3& getPosition();
-	void moveForward(float offset);
-	void moveRight(float offset);
-	void moveUp(float offset);
+	Camera();
 
-	void setRotation(glm::vec2 rotation);
-	void rotate(glm::vec2 value);
-	[[nodiscard]] const glm::vec2& getRotation() const;
-	[[nodiscard]] glm::vec2& getRotation();
-	void setRotationX(float x);
-	void rotateX(float x);
-	[[nodiscard]] float getRotationX() const;
-	void setRotationY(float y);
-	void rotateY(float y);
-	[[nodiscard]] float getRotationY() const;
+	void rotate(glm::vec2 value) override;
 
 	[[nodiscard]] const glm::mat4& getMatrix();
 
@@ -60,27 +45,15 @@ public:
 	void setSensitive(glm::vec2 value);
 	[[nodiscard]] glm::vec2 getSensitive() const;
 
-	void setMaxPitch(float value);
-	[[nodiscard]] float getMaxPitch() const;
+	[[nodiscard]] boost::property_tree::ptree toJson() const override;
 
-private:
-	void recalculateMatrices();
-	[[nodiscard]] glm::vec3 getForwardVector() const;
-	[[nodiscard]] glm::vec3 getUpVector() const;
-	[[nodiscard]] glm::vec3 getRightVector() const;
+	void update() override{};
 
-private:
-	float maxPitch = 90.f;
+protected:
 	glm::vec2 sensitive_{2.f, 2.f};
-	glm::mat4 cachedViewMatrix_ = glm::mat4(1.f);
 	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);
+	glm::mat4 cachedCalculatedMatrix_ = glm::mat4(1.f);
 	float fov_ = 90.f;
 	float far_ = 10'000.f;
 	float near_ = 0.001f;
-	glm::vec3 position_{0.f, 0.f, -100.f};
-	glm::vec2 rotation_{};
-	bool matrixIsDirty_ = true;
-	glm::mat4 cachedCalculatedMatrix_ = glm::mat4(1.f);
-	int cachedWidth_ = 0.f;
-	int cachedHeight_ = 0.f;
 };

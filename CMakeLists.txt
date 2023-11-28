@@ -27,6 +27,7 @@ add_subdirectory(lib/core/freetype-wrapper)
 add_subdirectory(lib/core/graphics)
 add_subdirectory(lib/core/input-devices)
 add_subdirectory(lib/core/logger)
+add_subdirectory(lib/core/scene-objects)
 add_subdirectory(lib/core/window)
 add_subdirectory(lib/core/world)
 

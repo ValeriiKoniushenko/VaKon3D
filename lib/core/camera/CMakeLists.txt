@@ -25,4 +25,5 @@ target_link_libraries(
 	Window
 	Boost
 	FreeType-Wrapper
+	Scene-Objects
 )
