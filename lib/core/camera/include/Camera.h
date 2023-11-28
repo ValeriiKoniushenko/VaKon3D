@@ -46,9 +46,9 @@ public:
 	[[nodiscard]] glm::vec2 getSensitive() const;
 
 	[[nodiscard]] boost::property_tree::ptree toJson() const override;
-	
+
 protected:
-	glm::vec2 sensitive_{2.f, 2.f};
+	glm::vec2 sensitive_{3.f, 3.f};
 	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);
 	glm::mat4 cachedCalculatedMatrix_ = glm::mat4(1.f);
 	float fov_ = 90.f;

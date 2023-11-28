@@ -237,7 +237,7 @@ void SceneObject::addImpulseForward(float value)
 {
 	if (speed_ < maxSpeed_)
 	{
-		impulse_.z += value / mass_;
+		impulse_.z += value / mass_ * std::get<float>(GetWorldVariables()["tick"]);
 	}
 }
 
@@ -245,7 +245,7 @@ void SceneObject::addImpulseRight(float value)
 {
 	if (speed_ < maxSpeed_)
 	{
-		impulse_.x += value / mass_;
+		impulse_.x += value / mass_ * std::get<float>(GetWorldVariables()["tick"]);
 	}
 }
 
@@ -253,7 +253,7 @@ void SceneObject::addImpulseUp(float value)
 {
 	if (speed_ < maxSpeed_)
 	{
-		impulse_.y += value / mass_;
+		impulse_.y += value / mass_ * std::get<float>(GetWorldVariables()["tick"]);
 	}
 }
 
