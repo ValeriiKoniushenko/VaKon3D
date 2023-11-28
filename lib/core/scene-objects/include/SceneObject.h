@@ -84,13 +84,19 @@ public:
 	void setMass(float mass);
 	[[nodiscard]] float getMass() const;
 
+	void setMaxSpeed(float value);
+	[[nodiscard]] float getMaxSpeed() const;
+	[[nodiscard]] float getCurrentSpeed() const;
+
 protected:
 	void recalculateMatrices();
 
 	LambdaMulticastDelegate<void()> onRecalculateMatrices;
 
 protected:
-	float mass_ = 1000.f;
+	float speed_{};
+	float maxSpeed_{200.f};
+	float mass_ = 1.f;
 	glm::vec3 impulse_{};
 	float maxPitch = 90.f;
 	glm::vec3 position_{0.f, 0.f, -100.f};

@@ -22,6 +22,7 @@
 
 #include "SceneObject.h"
 
+#include "WorldVariables.h"
 #include "glm/gtx/transform.hpp"
 
 #include <algorithm>
@@ -234,23 +235,34 @@ void SceneObject::recalculateMatrices()
 
 void SceneObject::addImpulseForward(float value)
 {
-	impulse_.z += value / mass_;
+	if (speed_ < maxSpeed_)
+	{
+		impulse_.z += value / mass_;
+	}
 }
 
 void SceneObject::addImpulseRight(float value)
 {
-	impulse_.x += value / mass_;
+	if (speed_ < maxSpeed_)
+	{
+		impulse_.x += value / mass_;
+	}
 }
 
 void SceneObject::addImpulseUp(float value)
 {
-	impulse_.y += value / mass_;
+	if (speed_ < maxSpeed_)
+	{
+		impulse_.y += value / mass_;
+	}
 }
 
 void SceneObject::update()
 {
 	impulse_ *= airResistance;
-	moveForward(impulse_.z);
+	speed_ = glm::length(impulse_) * 1'000.f;
+
+	moveForward(impulse_.z*);
 	moveRight(impulse_.x);
 	moveUp(impulse_.y);
 }
@@ -263,4 +275,19 @@ void SceneObject::setMass(float mass)
 float SceneObject::getMass() const
 {
 	return mass_;
+}
+
+void SceneObject::setMaxSpeed(float value)
+{
+	maxSpeed_ = value;
+}
+
+float SceneObject::getMaxSpeed() const
+{
+	return maxSpeed_;
+}
+
+float SceneObject::getCurrentSpeed() const
+{
+	return speed_;
 }

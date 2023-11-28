@@ -26,4 +26,5 @@ target_link_libraries(
 	Boost
 	FreeType-Wrapper
 	Camera
+	World
 )
