@@ -46,9 +46,7 @@ public:
 	[[nodiscard]] glm::vec2 getSensitive() const;
 
 	[[nodiscard]] boost::property_tree::ptree toJson() const override;
-
-	void update() override{};
-
+	
 protected:
 	glm::vec2 sensitive_{2.f, 2.f};
 	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);

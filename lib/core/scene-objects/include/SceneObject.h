@@ -48,6 +48,15 @@ public:
 	/** brief: working in local coordinates */
 	virtual void moveUp(float offset);
 
+	/** brief: working in local coordinates */
+	virtual void addImpulseForward(float value);
+
+	/** brief: working in local coordinates */
+	virtual void addImpulseRight(float value);
+
+	/** brief: working in local coordinates */
+	virtual void addImpulseUp(float value);
+
 	virtual void setRotation(glm::vec2 rotation);
 	virtual void rotate(glm::vec2 value);
 	[[nodiscard]] virtual const glm::vec2& getRotation() const;
@@ -66,12 +75,15 @@ public:
 	[[nodiscard]] virtual glm::vec3 getUpVector() const;
 	[[nodiscard]] virtual glm::vec3 getRightVector() const;
 
+	void update() override;
+
 protected:
 	void recalculateMatrices();
 
 	LambdaMulticastDelegate<void()> onRecalculateMatrices;
 
 protected:
+	glm::vec3 impulse_{};
 	float maxPitch = 90.f;
 	glm::vec3 position_{0.f, 0.f, -100.f};
 	glm::vec2 rotation_{};

@@ -229,3 +229,26 @@ void SceneObject::recalculateMatrices()
 		matricesAreDirty_ = false;
 	}
 }
+
+void SceneObject::addImpulseForward(float value)
+{
+	impulse_.z += value;
+}
+
+void SceneObject::addImpulseRight(float value)
+{
+	impulse_.x += value;
+}
+
+void SceneObject::addImpulseUp(float value)
+{
+	impulse_.y += value;
+}
+
+void SceneObject::update()
+{
+	impulse_ *= 0.999f;
+	moveForward(impulse_.z);
+	moveRight(impulse_.x);
+	moveUp(impulse_.y);
+}
