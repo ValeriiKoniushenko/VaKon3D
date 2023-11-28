@@ -29,7 +29,5 @@
 class JsonPrintable : public Utils::CopyableAndMoveable
 {
 public:
-	virtual ~JsonPrintable() = default;
-
 	[[nodiscard]] virtual boost::property_tree::ptree toJson() const = 0;
 };
