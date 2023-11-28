@@ -262,7 +262,7 @@ void SceneObject::update()
 	impulse_ *= airResistance;
 	speed_ = glm::length(impulse_) * 1'000.f;
 
-	moveForward(impulse_.z*);
+	moveForward(impulse_.z);
 	moveRight(impulse_.x);
 	moveUp(impulse_.y);
 }
