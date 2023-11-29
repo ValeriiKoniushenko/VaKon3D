@@ -27,4 +27,5 @@ target_link_libraries(
 	FreeType-Wrapper
 	Camera
 	World
+	Graphics
 )

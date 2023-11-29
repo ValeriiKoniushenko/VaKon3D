@@ -27,6 +27,9 @@
 #include "Updateable.h"
 #include "glm/glm.hpp"
 
+class ShaderPack;
+class Camera;
+
 class SceneObject : public JsonPrintable, public Updateable
 {
 public:
@@ -87,6 +90,8 @@ public:
 	void setMaxSpeed(float value);
 	[[nodiscard]] float getMaxSpeed() const;
 	[[nodiscard]] float getCurrentSpeed() const;
+
+	virtual void draw(ShaderPack& shaderPack, Camera& camera){};
 
 protected:
 	void recalculateMatrices();

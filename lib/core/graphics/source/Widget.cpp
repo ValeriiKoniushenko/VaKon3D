@@ -106,7 +106,10 @@ void Widget::draw(ShaderPack& shaderPack)
 
 	Gl::drawArrays(GL_TRIANGLES, 0, verticesTemplate_.size());
 
-	glDisable(GL_BLEND);
+	if (texture_)
+	{
+		texture_->unbind();
+	}
 }
 
 void Widget::setSize(Utils::FSize2D size)

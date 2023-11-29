@@ -22,37 +22,36 @@
 
 #pragma once
 
-#include "NotCopyableButMovable.h"
-#include "Size.h"
+#include "SceneObject.h"
+#include "Triangle.h"
 #include "TriangleVbo.h"
-#include "Vao.h"
 
-class Camera;
-class ShaderPack;
-class Texture;
-
-class Triangle : public Utils::NotCopyableButMovable
+class Cube : public SceneObject
 {
 public:
-	const inline static GLsizei verticesCount = 3;
+	inline static const std::size_t sidesCount = 12;
 
-	Triangle() = default;
-	explicit Triangle(Texture& texture);
-
-	void draw(ShaderPack& shaderPack, Camera& camera, const glm::mat4& model);
+	void draw(ShaderPack& shaderPack, Camera& camera) override;
+	[[nodiscard]] boost::property_tree::ptree toJson() const override;
 
 	void setTexture(Texture& texture);
 	[[nodiscard]] Texture* getTexture();
 	[[nodiscard]] const Texture* getTexture() const;
-	void resetTexture();
 
-	void setVertices(std::vector<TriangleVbo::Unit> vertices);
+	void setSize(float size);
+	[[nodiscard]] float getSize() const;
+
+	void update() override;
 
 private:
+	void setVertices();
+
+private:
+	float size_ = 100.f;
+	bool isDirtyTexture_ = false;
+	bool verticesAreDirty_ = true;
 	Texture* texture_ = nullptr;
-	Vao vao_;
 	TriangleVbo vbo_;
-	std::vector<TriangleVbo::Unit> vertices_;
-	bool isDirtyVertices_ = true;
-	bool isDirtyTexture_ = true;
+	Vao vao_;
+	std::vector<TriangleVbo::Unit> triangles_;
 };
