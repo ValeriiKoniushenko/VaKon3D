@@ -62,17 +62,20 @@ public:
 	/** brief: working in local coordinates */
 	virtual void addImpulseUp(float value);
 
-	virtual void setRotation(glm::vec2 rotation);
-	virtual void rotate(glm::vec2 value);
-	[[nodiscard]] virtual const glm::vec2& getRotation() const;
-	[[nodiscard]] virtual glm::vec2& getRotation();
+	virtual void setRotation(const glm::vec3& rotation);
+	virtual void rotate(const glm::vec3& value);
+	[[nodiscard]] virtual const glm::vec3& getRotation() const;
+	[[nodiscard]] virtual glm::vec3& getRotation();
 	virtual void setRotationX(float x);
 	virtual void rotateX(float x);
 	[[nodiscard]] virtual float getRotationX() const;
 	virtual void setRotationY(float y);
 	virtual void rotateY(float y);
 	[[nodiscard]] virtual float getRotationY() const;
-	// TODO: add rotation by the axis Z
+	virtual void setRotationZ(float z);
+	virtual void rotateZ(float z);
+	[[nodiscard]] virtual float getRotationZ() const;
+	// TODO: add scaling
 
 	virtual void setMaxPitch(float value);
 	[[nodiscard]] virtual float getMaxPitch() const;
@@ -108,7 +111,7 @@ protected:
 	glm::vec3 impulse_{};
 	float maxPitch = 90.f;
 	glm::vec3 position_{0.f, 0.f, 0.f};
-	glm::vec2 rotation_{};
+	glm::vec3 rotation_{};
 	bool matricesAreDirty_ = true;
 	glm::mat4 cachedModelMatrix_ = glm::mat4(1.f);
 	bool isReverseMatrixCalculating_ = false;

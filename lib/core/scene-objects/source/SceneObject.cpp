@@ -56,7 +56,7 @@ void SceneObject::moveUp(float offset)
 	matricesAreDirty_ = true;
 }
 
-void SceneObject::setRotation(glm::vec2 rotation)
+void SceneObject::setRotation(const glm::vec3& rotation)
 {
 	rotation_ = rotation;
 	matricesAreDirty_ = true;
@@ -77,12 +77,17 @@ void SceneObject::setRotation(glm::vec2 rotation)
 	{
 		rotation_.x -= 360.f;
 	}
+	while (rotation_.z >= 360.f)
+	{
+		rotation_.z -= 360.f;
+	}
 }
 
-void SceneObject::rotate(glm::vec2 value)
+void SceneObject::rotate(const glm::vec3& value)
 {
 	rotation_.y += value.x;
 	rotation_.x += value.y;
+	rotation_.z += value.z;
 
 	if (rotation_.x > maxPitch)
 	{
@@ -101,16 +106,20 @@ void SceneObject::rotate(glm::vec2 value)
 	{
 		rotation_.x -= 360.f;
 	}
+	while (rotation_.z >= 360.f)
+	{
+		rotation_.z -= 360.f;
+	}
 
 	matricesAreDirty_ = true;
 }
 
-const glm::vec2& SceneObject::getRotation() const
+const glm::vec3& SceneObject::getRotation() const
 {
 	return rotation_;
 }
 
-glm::vec2& SceneObject::getRotation()
+glm::vec3& SceneObject::getRotation()
 {
 	return rotation_;
 }
@@ -162,6 +171,31 @@ void SceneObject::rotateY(float y)
 	{
 		rotation_.y -= 360.f;
 	}
+}
+
+void SceneObject::setRotationZ(float z)
+{
+	rotation_.z = z;
+	matricesAreDirty_ = true;
+	while (rotation_.z >= 360.f)
+	{
+		rotation_.z -= 360.f;
+	}
+}
+
+void SceneObject::rotateZ(float z)
+{
+	rotation_.z += z;
+	matricesAreDirty_ = true;
+	while (rotation_.z >= 360.f)
+	{
+		rotation_.z -= 360.f;
+	}
+}
+
+float SceneObject::getRotationZ() const
+{
+	return rotation_.z;
 }
 
 float SceneObject::getRotationY() const
@@ -223,6 +257,7 @@ void SceneObject::recalculateMatrices()
 
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.z), glm::vec3(0.f, 0.f, 1.f));
 
 			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, -origin_);
 		}
@@ -230,6 +265,7 @@ void SceneObject::recalculateMatrices()
 		{
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.z), glm::vec3(0.f, 0.f, 1.f));
 
 			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, position_);
 			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);

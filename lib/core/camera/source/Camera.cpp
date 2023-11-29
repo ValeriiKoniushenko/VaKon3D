@@ -46,11 +46,12 @@ Camera::Camera()
 		});
 }
 
-void Camera::rotate(glm::vec2 value)
+void Camera::rotate(const glm::vec3& value_)
 {
 	// SceneObject::rotate(value); - Don't do this
-
-	value /= sensitive_;
+	auto value = value_;
+	value.x /= sensitive_.x;
+	value.y /= sensitive_.y;
 
 	rotation_.y += value.x;
 	rotation_.x += value.y;

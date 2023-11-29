@@ -31,7 +31,7 @@ public:
 
 	[[nodiscard]] glm::vec3 getPosition() const override;
 
-	void rotate(glm::vec2 value) override;
+	void rotate(const glm::vec3& value) override;
 
 	[[nodiscard]] const glm::mat4& getMatrix();
 
