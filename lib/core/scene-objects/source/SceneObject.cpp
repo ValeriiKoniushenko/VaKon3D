@@ -33,14 +33,9 @@ void SceneObject::setPosition(const glm::vec3& position)
 	matricesAreDirty_ = true;
 }
 
-const glm::vec3& SceneObject::getPosition() const
+glm::vec3 SceneObject::getPosition() const
 {
-	return position_;
-}
-
-glm::vec3& SceneObject::getPosition()
-{
-	return position_;
+	return -position_;
 }
 
 void SceneObject::moveForward(float offset)

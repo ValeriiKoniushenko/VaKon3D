@@ -33,4 +33,12 @@ struct Lightning
 		glm::vec3 direction = {1.f, 0.7f, 0.5f};
 		float maxDark = 0.02f;
 	} ambient;
+
+	struct Specular
+	{
+		GlColor3 lightColor = {1.f, 1.f, 1.f};
+		glm::vec3 position = {1000.f, 0.f, 0.f};
+		float intensity = 0.4f;
+		int specularPow = 256;
+	} specular;
 };

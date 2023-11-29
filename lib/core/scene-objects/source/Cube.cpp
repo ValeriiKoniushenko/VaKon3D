@@ -67,9 +67,16 @@ void Cube::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& came
 
 	shader.uniform("uProjectionAndView", false, camera.getMatrix());
 	shader.uniform("uModel", false, cachedModelMatrix_);
+
 	shader.uniform("uAmbientLightColor", lightning.ambient.lightColor);
 	shader.uniform("uAmbientLightDirection", lightning.ambient.direction);
 	shader.uniform("uAmbientLightMaxDark", lightning.ambient.maxDark);
+
+	shader.uniform("uSpecularColor", lightning.specular.lightColor);
+	shader.uniform("uSpecularPosition", lightning.specular.position);
+	shader.uniform("uSpecularIntensity", lightning.specular.intensity);
+	shader.uniform("uSpecularPow", lightning.specular.specularPow);
+	shader.uniform("uViewPosition", camera.getPosition());
 
 	Gl::drawArrays(GL_TRIANGLES, 0, sidesCount * Triangle::verticesCount);
 }

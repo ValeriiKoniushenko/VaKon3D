@@ -42,10 +42,7 @@ public:
 	virtual void setPosition(const glm::vec3& position);
 
 	/** brief: working in global coordinates */
-	[[nodiscard]] virtual const glm::vec3& getPosition() const;
-
-	/** brief: working in global coordinates */
-	[[nodiscard]] virtual glm::vec3& getPosition();
+	[[nodiscard]] virtual glm::vec3 getPosition() const;
 
 	/** brief: working in local coordinates */
 	virtual void moveForward(float offset);
