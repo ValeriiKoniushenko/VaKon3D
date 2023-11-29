@@ -29,6 +29,8 @@ class Camera : public SceneObject
 public:
 	Camera();
 
+	[[nodiscard]] glm::vec3 getPosition() const override;
+
 	void rotate(glm::vec2 value) override;
 
 	[[nodiscard]] const glm::mat4& getMatrix();

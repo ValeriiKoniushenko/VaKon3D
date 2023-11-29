@@ -86,6 +86,11 @@ void Cube::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& came
 	}
 
 	Gl::drawArrays(GL_TRIANGLES, 0, sidesCount * Triangle::verticesCount);
+
+	if (texture_)
+	{
+		texture_->unbind();
+	}
 }
 
 boost::property_tree::ptree Cube::toJson() const

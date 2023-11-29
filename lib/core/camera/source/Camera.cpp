@@ -29,6 +29,7 @@
 
 Camera::Camera()
 {
+	isReverseMatrixCalculating_ = true;
 	onRecalculateMatrices.subscribe(
 		[this]()
 		{
@@ -123,4 +124,9 @@ boost::property_tree::ptree Camera::toJson() const
 	tree.put("", 1);
 
 	return tree;
+}
+
+glm::vec3 Camera::getPosition() const
+{
+	return -position_;
 }

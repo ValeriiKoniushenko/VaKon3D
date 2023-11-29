@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "NotCopyableButMovable.h"
+#include "SceneObject.h"
 #include "Size.h"
 #include "TriangleVbo.h"
 #include "Vao.h"
@@ -31,7 +31,7 @@ class Camera;
 class ShaderPack;
 class Texture;
 
-class Triangle : public Utils::NotCopyableButMovable
+class Triangle : public SceneObject
 {
 public:
 	const inline static GLsizei verticesCount = 3;
@@ -39,7 +39,7 @@ public:
 	Triangle() = default;
 	explicit Triangle(Texture& texture);
 
-	void draw(ShaderPack& shaderPack, Camera& camera, const glm::mat4& model);
+	void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera) override;
 
 	void setTexture(Texture& texture);
 	[[nodiscard]] Texture* getTexture();
@@ -47,12 +47,13 @@ public:
 	void resetTexture();
 
 	void setVertices(std::vector<TriangleVbo::Unit> vertices);
+	boost::property_tree::ptree toJson() const override;
 
 private:
 	Texture* texture_ = nullptr;
 	Vao vao_;
 	TriangleVbo vbo_;
 	std::vector<TriangleVbo::Unit> vertices_;
-	bool isDirtyVertices_ = true;
+	bool verticesAreDirty_ = true;
 	bool isDirtyTexture_ = true;
 };

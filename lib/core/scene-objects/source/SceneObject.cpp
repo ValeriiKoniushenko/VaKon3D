@@ -35,7 +35,7 @@ void SceneObject::setPosition(const glm::vec3& position)
 
 glm::vec3 SceneObject::getPosition() const
 {
-	return -position_;
+	return position_ + origin_;
 }
 
 void SceneObject::moveForward(float offset)
@@ -217,11 +217,22 @@ void SceneObject::recalculateMatrices()
 	{
 		cachedModelMatrix_ = glm::mat4(1.f);
 
-		cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
-		cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+		if (!isReverseMatrixCalculating_)
+		{
+			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, position_);
+			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);
 
-		cachedModelMatrix_ = glm::translate(cachedModelMatrix_, position_);
-		cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);
+			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
+			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+		}
+		else
+		{
+			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
+			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+
+			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, position_);
+			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);
+		}
 
 		onRecalculateMatrices.trigger();
 

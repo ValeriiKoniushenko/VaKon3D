@@ -110,4 +110,5 @@ protected:
 	glm::vec2 rotation_{};
 	bool matricesAreDirty_ = true;
 	glm::mat4 cachedModelMatrix_ = glm::mat4(1.f);
+	bool isReverseMatrixCalculating_ = false;
 };

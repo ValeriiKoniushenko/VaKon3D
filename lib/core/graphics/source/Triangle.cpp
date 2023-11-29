@@ -23,6 +23,7 @@
 #include "Triangle.h"
 
 #include "Camera.h"
+#include "Image.h"
 #include "ShaderPack.h"
 #include "Texture.h"
 #include "Window.h"
@@ -32,8 +33,10 @@ Triangle::Triangle(Texture& texture)
 	texture_ = &texture;
 }
 
-void Triangle::draw(ShaderPack& shaderPack, Camera& camera, const glm::mat4& model)
+void Triangle::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera)
 {
+	SceneObject::draw(shaderPack, lightning, camera);
+
 	auto& shader = shaderPack["triangle"];
 	shader.use();
 
@@ -58,25 +61,41 @@ void Triangle::draw(ShaderPack& shaderPack, Camera& camera, const glm::mat4& mod
 	vao_.bind();
 	vbo_.bind();
 
-	if (isDirtyVertices_)
+	if (verticesAreDirty_)
 	{
-		if (vertices_.empty())
-		{
-			throw std::runtime_error("Impossible to load to the GPU zero data. At first set vertices");
-		}
-		vbo_.bind();
 		vbo_.data(vertices_);
-		isDirtyVertices_ = false;
+		verticesAreDirty_ = false;
 	}
 
-	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 8 * sizeof(float), nullptr);
-	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 10 * sizeof(float), nullptr);
+	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(4, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(8 * sizeof(float)));
 
 	shader.uniform("uProjectionAndView", false, camera.getMatrix());
-	shader.uniform("uModel", false, model);
+	shader.uniform("uModel", false, cachedModelMatrix_);
 
-	Gl::drawArrays(GL_TRIANGLES, 0, verticesCount);
+	shader.uniform("uAmbientLightColor", lightning.ambient.lightColor);
+	shader.uniform("uAmbientLightDirection", lightning.ambient.direction);
+	shader.uniform("uAmbientLightMaxDark", lightning.ambient.maxDark);
+
+	shader.uniform("uSpecularColor", lightning.specular.lightColor);
+	shader.uniform("uSpecularPosition", lightning.specular.position);
+	shader.uniform("uSpecularIntensity", lightning.specular.intensity);
+	shader.uniform("uSpecularPow", lightning.specular.specularPow);
+	shader.uniform("uViewPosition", camera.getPosition());
+
+	if (texture_)
+	{
+		shader.uniform("uAtlasSize", texture_->getImage()->getSize());
+	}
+
+	Gl::drawArrays(GL_TRIANGLES, 0, Triangle::verticesCount);
+
+	if (texture_)
+	{
+		texture_->unbind();
+	}
 }
 
 void Triangle::setTexture(Texture& texture)
@@ -107,5 +126,10 @@ void Triangle::setVertices(std::vector<TriangleVbo::Unit> vertices)
 		throw std::runtime_error("Impossible to set vertices. The vertices count must be equal to three");
 	}
 	vertices_ = std::move(vertices);
-	isDirtyVertices_ = true;
+	verticesAreDirty_ = true;
+}
+
+boost::property_tree::ptree Triangle::toJson() const
+{
+	return boost::property_tree::ptree();
 }
