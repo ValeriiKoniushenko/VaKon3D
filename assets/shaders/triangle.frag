@@ -4,23 +4,19 @@ out vec4 oColor;
 
 in vec2 ioUv;
 in vec3 ioNormal;
-
-struct AmbientLight
-{
-    vec3 lightColor;
-};
-
-struct Light
-{
-    AmbientLight ambientLight;
-} light;
+in vec3 ioFragmentPosition;
 
 uniform sampler2D uTexture;
-uniform vec3 uAmbientLightLightColor;
+uniform vec3 uAmbientLightColor;
+uniform vec3 uAmbientLightDirection;
+uniform float uAmbientLightMaxDark;
 
 void main()
 {
-    light.ambientLight.lightColor = uAmbientLightLightColor;
+    vec3 normal = normalize(ioNormal);
 
-    oColor = texture(uTexture, ioUv) * vec4(light.ambientLight.lightColor, 1.f);
+    float diffuseLight = max(dot(normal, uAmbientLightDirection), uAmbientLightMaxDark);
+
+    oColor = texture(uTexture, ioUv);
+    oColor.rgb *= diffuseLight * uAmbientLightColor;
 }

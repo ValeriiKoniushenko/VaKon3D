@@ -67,7 +67,9 @@ void Cube::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& came
 
 	shader.uniform("uProjectionAndView", false, camera.getMatrix());
 	shader.uniform("uModel", false, cachedModelMatrix_);
-	shader.uniform("uAmbientLightLightColor", lightning.ambient.lightColor);
+	shader.uniform("uAmbientLightColor", lightning.ambient.lightColor);
+	shader.uniform("uAmbientLightDirection", lightning.ambient.direction);
+	shader.uniform("uAmbientLightMaxDark", lightning.ambient.maxDark);
 
 	Gl::drawArrays(GL_TRIANGLES, 0, sidesCount * Triangle::verticesCount);
 }
@@ -111,6 +113,7 @@ void Cube::setVertices()
 
 	using Unit = TriangleVbo::Unit;
 
+	// front side
 	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, 0.f, 1.f}});
 	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {0.f, 0.f, 1.f}});
 	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {0.f, 0.f, 1.f}});

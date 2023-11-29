@@ -68,9 +68,13 @@ public:
 
 	[[nodiscard]] bool isValid() const;
 
-	void uniform(const std::string& name, const glm::ivec2& color);
+	void uniform(const std::string& name, const glm::ivec3& value);
 
-	void uniform(const std::string& name, const glm::vec2& color);
+	void uniform(const std::string& name, const glm::vec3& value);
+
+	void uniform(const std::string& name, const glm::ivec2& value);
+
+	void uniform(const std::string& name, const glm::vec2& value);
 
 	void uniform(const std::string& name, const GlColor4& color);
 

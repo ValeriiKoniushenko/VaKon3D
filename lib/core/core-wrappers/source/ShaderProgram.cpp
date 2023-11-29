@@ -121,6 +121,26 @@ GLint ShaderProgram::getUniformLocation(const std::string& name)
 	return it->second;
 }
 
+void ShaderProgram::uniform(const std::string& name, const glm::ivec3& value)
+{
+	uniform(name, value.x, value.y, value.z);
+}
+
+void ShaderProgram::uniform(const std::string& name, const glm::vec3& value)
+{
+	uniform(name, value.x, value.y, value.z);
+}
+
+void ShaderProgram::uniform(const std::string& name, const glm::ivec2& value)
+{
+	uniform(name, static_cast<float>(value.x), static_cast<float>(value.y));
+}
+
+void ShaderProgram::uniform(const std::string& name, const glm::vec2& value)
+{
+	uniform(name, static_cast<float>(value.x), static_cast<float>(value.y));
+}
+
 void ShaderProgram::uniform(const std::string& name, const GlColor4& color)
 {
 	const GLint location = getUniformLocation(name);
@@ -279,14 +299,4 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept
 bool ShaderProgram::isValid() const
 {
 	return data_ != Gl::Program::invalidId;
-}
-
-void ShaderProgram::uniform(const std::string& name, const glm::ivec2& color)
-{
-	uniform(name, static_cast<float>(color.x), static_cast<float>(color.y));
-}
-
-void ShaderProgram::uniform(const std::string& name, const glm::vec2& color)
-{
-	uniform(name, static_cast<float>(color.x), static_cast<float>(color.y));
 }

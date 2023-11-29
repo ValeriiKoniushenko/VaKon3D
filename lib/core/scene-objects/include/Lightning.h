@@ -30,5 +30,7 @@ struct Lightning
 	struct Ambient
 	{
 		GlColor3 lightColor = {1.f, 1.f, 1.f};
+		glm::vec3 direction = {1.f, 0.7f, 0.5f};
+		float maxDark = 0.02f;
 	} ambient;
 };
