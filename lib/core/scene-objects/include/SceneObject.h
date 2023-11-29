@@ -91,18 +91,22 @@ public:
 
 	virtual void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera){};
 
+	virtual void setOrigin(const glm::vec3& origin);
+	[[nodiscard]] virtual const glm::vec3& getOrigin() const;
+
 protected:
 	void recalculateMatrices();
 
 	LambdaMulticastDelegate<void()> onRecalculateMatrices;
 
 protected:
+	glm::vec3 origin_{};
 	float speed_{};
 	float maxSpeed_{200.f};
 	float mass_ = 1.f;
 	glm::vec3 impulse_{};
 	float maxPitch = 90.f;
-	glm::vec3 position_{0.f, 0.f, -100.f};
+	glm::vec3 position_{0.f, 0.f, 0.f};
 	glm::vec2 rotation_{};
 	bool matricesAreDirty_ = true;
 	glm::mat4 cachedModelMatrix_ = glm::mat4(1.f);

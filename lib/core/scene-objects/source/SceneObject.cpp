@@ -221,6 +221,7 @@ void SceneObject::recalculateMatrices()
 		cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
 
 		cachedModelMatrix_ = glm::translate(cachedModelMatrix_, position_);
+		cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);
 
 		onRecalculateMatrices.trigger();
 
@@ -287,4 +288,15 @@ float SceneObject::getMaxSpeed() const
 float SceneObject::getCurrentSpeed() const
 {
 	return speed_;
+}
+
+void SceneObject::setOrigin(const glm::vec3& origin)
+{
+	origin_ = origin;
+	matricesAreDirty_ = true;
+}
+
+const glm::vec3& SceneObject::getOrigin() const
+{
+	return origin_;
 }
