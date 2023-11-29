@@ -220,10 +220,11 @@ void SceneObject::recalculateMatrices()
 		if (!isReverseMatrixCalculating_)
 		{
 			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, position_);
-			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);
 
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+
+			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, -origin_);
 		}
 		else
 		{

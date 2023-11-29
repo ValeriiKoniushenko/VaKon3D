@@ -72,6 +72,7 @@ public:
 	virtual void setRotationY(float y);
 	virtual void rotateY(float y);
 	[[nodiscard]] virtual float getRotationY() const;
+	// TODO: add rotation by the axis Z
 
 	virtual void setMaxPitch(float value);
 	[[nodiscard]] virtual float getMaxPitch() const;
