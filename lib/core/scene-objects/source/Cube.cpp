@@ -23,6 +23,7 @@
 #include "Cube.h"
 
 #include "Camera.h"
+#include "Image.h"
 #include "ShaderPack.h"
 #include "Texture.h"
 
@@ -61,9 +62,10 @@ void Cube::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& came
 		verticesAreDirty_ = false;
 	}
 
-	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 8 * sizeof(float), nullptr);
-	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 8 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 10 * sizeof(float), nullptr);
+	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(4, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(8 * sizeof(float)));
 
 	shader.uniform("uProjectionAndView", false, camera.getMatrix());
 	shader.uniform("uModel", false, cachedModelMatrix_);
@@ -77,6 +79,11 @@ void Cube::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& came
 	shader.uniform("uSpecularIntensity", lightning.specular.intensity);
 	shader.uniform("uSpecularPow", lightning.specular.specularPow);
 	shader.uniform("uViewPosition", camera.getPosition());
+
+	if (texture_)
+	{
+		shader.uniform("uAtlasSize", texture_->getImage()->getSize());
+	}
 
 	Gl::drawArrays(GL_TRIANGLES, 0, sidesCount * Triangle::verticesCount);
 }
@@ -119,49 +126,50 @@ void Cube::setVertices()
 	triangles_.reserve(sidesCount * Triangle::verticesCount);
 
 	using Unit = TriangleVbo::Unit;
+	glm::vec2 textureSize = texture_->getImage()->getSize();
 
 	// front side
-	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, 0.f, 1.f}});
-	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {0.f, 0.f, 1.f}});
-	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {0.f, 0.f, 1.f}});
-	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, 0.f, 1.f}});
-	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {0.f, 0.f, 1.f}});
-	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {0.f, 1.f}, {0.f, 0.f, 1.f}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, 0.f, 1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {0.f, 0.f, 1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {0.f, 0.f, 1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, 0.f, 1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {0.f, 0.f, 1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {0.f, 1.f}, {0.f, 0.f, 1.f}, {textureSize.x, textureSize.y}});
 	// back side
-	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {0.f, 0.f, -1.f}});
-	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 0.f, -1.f}});
-	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {1.f, 0.f}, {0.f, 0.f, -1.f}});
-	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {0.f, 0.f, -1.f}});
-	triangles_.emplace_back(Unit{{0.f, size_, -size_}, {0.f, 1.f}, {0.f, 0.f, -1.f}});
-	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 0.f, -1.f}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {0.f, 0.f, -1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 0.f, -1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {1.f, 0.f}, {0.f, 0.f, -1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {0.f, 0.f, -1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, size_, -size_}, {0.f, 1.f}, {0.f, 0.f, -1.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 0.f, -1.f}, {textureSize.y, textureSize.y}});
 	// left side
-	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {1.f, 0.f}, {-1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {1.f, 1.f}, {-1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {-1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {-1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {1.f, 1.f}, {-1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, size_, -size_}, {1.f, 0.f}, {-1.f, 0.f, 0.f}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {1.f, 0.f}, {-1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {1.f, 1.f}, {-1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {-1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 0.f}, {-1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {1.f, 1.f}, {-1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, size_, -size_}, {1.f, 0.f}, {-1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
 	// right side
-	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {0.f, 0.f}, {1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {0.f, 0.f}, {1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 0.f}, {1.f, 0.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {1.f, 0.f, 0.f}});
+	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {0.f, 0.f}, {1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {0.f, 0.f}, {1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 0.f}, {1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 1.f}, {1.f, 0.f, 0.f}, {textureSize.x, textureSize.y}});
 	// top side
-	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {0.f, 0.f}, {0.f, 1.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 1.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, size_, -size_}, {0.f, 1.f}, {0.f, 1.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 1.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {0.f, 0.f}, {0.f, 1.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 0.f}, {0.f, 1.f, 0.f}});
+	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {0.f, 0.f}, {0.f, 1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, size_, -size_}, {0.f, 1.f}, {0.f, 1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, -size_}, {1.f, 1.f}, {0.f, 1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, size_, 0.f}, {0.f, 0.f}, {0.f, 1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, size_, 0.f}, {1.f, 0.f}, {0.f, 1.f, 0.f}, {textureSize.x, textureSize.y}});
 	// bottom side
-	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, -1.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 1.f}, {0.f, -1.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {1.f, 1.f}, {0.f, -1.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {1.f, 1.f}, {0.f, -1.f, 0.f}});
-	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {0.f, -1.f, 0.f}});
-	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, -1.f, 0.f}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, -size_}, {0.f, 1.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {1.f, 1.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {1.f, 1.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
+	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
 }
 
 void Cube::update()

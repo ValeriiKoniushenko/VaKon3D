@@ -3,6 +3,7 @@
 out vec4 oColor;
 
 in vec2 ioUv;
+in vec2 ioTextureRectSize;
 in vec3 ioNormal;
 in vec3 ioFragmentPosition;
 in vec3 ioSurfaceToView;
@@ -28,7 +29,9 @@ void main()
     vec3 halfVector = normalize(surfaceToView + surfaceToLight);
     float specularLight = max(pow(dot(normal, halfVector), uSpecularPow) * uSpecularIntensity, 0.f);
 
-    oColor = texture(uTexture, ioUv) * vec4(uAmbientLightColor, 1.f);
+    vec2 uv = vec2(ioTextureRectSize.x + ioUv.x, ioTextureRectSize.y + ioUv.y);
+
+    oColor = texture(uTexture, uv) * vec4(uAmbientLightColor, 1.f);
     oColor.rgb *= diffuseLight;
     oColor.rgb += specularLight * uSpecularColor;
 }
