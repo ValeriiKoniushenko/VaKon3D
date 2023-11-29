@@ -24,6 +24,7 @@
 
 #include "Delegate.h"
 #include "JsonPrintable.h"
+#include "Lightning.h"
 #include "Updateable.h"
 #include "glm/glm.hpp"
 
@@ -91,7 +92,7 @@ public:
 	[[nodiscard]] float getMaxSpeed() const;
 	[[nodiscard]] float getCurrentSpeed() const;
 
-	virtual void draw(ShaderPack& shaderPack, Camera& camera){};
+	virtual void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera){};
 
 protected:
 	void recalculateMatrices();

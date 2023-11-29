@@ -89,7 +89,7 @@ void Window::pollEvent()
 	glfwPollEvents();
 }
 
-void Window::clearColor(const GlColor& color)
+void Window::clearColor(const GlColor4& color)
 {
 	glClearColor(color.r, color.g, color.b, color.a);
 }

@@ -121,10 +121,16 @@ GLint ShaderProgram::getUniformLocation(const std::string& name)
 	return it->second;
 }
 
-void ShaderProgram::uniform(const std::string& name, const GlColor& color)
+void ShaderProgram::uniform(const std::string& name, const GlColor4& color)
 {
 	const GLint location = getUniformLocation(name);
 	Gl::Program::uniform4f(location, color.r, color.g, color.b, color.a);
+}
+
+void ShaderProgram::uniform(const std::string& name, const GlColor3& color)
+{
+	const GLint location = getUniformLocation(name);
+	Gl::Program::uniform3f(location, color.r, color.g, color.b);
 }
 
 void ShaderProgram::uniform(const std::string& name, GLfloat v0)

@@ -26,9 +26,9 @@
 #include "ShaderPack.h"
 #include "Texture.h"
 
-void Cube::draw(ShaderPack& shaderPack, Camera& camera)
+void Cube::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera)
 {
-	SceneObject::draw(shaderPack, camera);
+	SceneObject::draw(shaderPack, lightning, camera);
 
 	auto& shader = shaderPack["triangle"];
 	shader.use();
@@ -67,6 +67,7 @@ void Cube::draw(ShaderPack& shaderPack, Camera& camera)
 
 	shader.uniform("uProjectionAndView", false, camera.getMatrix());
 	shader.uniform("uModel", false, cachedModelMatrix_);
+	shader.uniform("uAmbientLightLightColor", lightning.ambient.lightColor);
 
 	Gl::drawArrays(GL_TRIANGLES, 0, sidesCount * Triangle::verticesCount);
 }

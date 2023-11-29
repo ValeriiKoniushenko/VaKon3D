@@ -28,7 +28,8 @@
 
 #include <unordered_map>
 
-struct GlColor;
+struct GlColor4;
+struct GlColor3;
 
 class Shader;
 
@@ -71,7 +72,9 @@ public:
 
 	void uniform(const std::string& name, const glm::vec2& color);
 
-	void uniform(const std::string& name, const GlColor& color);
+	void uniform(const std::string& name, const GlColor4& color);
+
+	void uniform(const std::string& name, const GlColor3& color);
 
 	void uniform(const std::string& name, GLfloat v0);
 

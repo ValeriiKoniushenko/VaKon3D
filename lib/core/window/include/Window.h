@@ -37,7 +37,7 @@ public:
 	[[nodiscard]] bool shouldClose() const;
 	void swapBuffers();
 	void pollEvent();
-	void clearColor(const GlColor& color);
+	void clearColor(const GlColor4& color);
 	void clear(int code);
 	void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 	[[nodiscard]] HWND getHwnd();
