@@ -110,6 +110,15 @@ public:
 	[[nodiscard]] Texture* getTexture();
 	[[nodiscard]] const Texture* getTexture() const;
 
+	void setOutlineStatus(bool isEnable);
+	[[nodiscard]] bool getOutlineStatus() const;
+
+	void setOutlineColor(const Color4& color);
+	[[nodiscard]] Color4 getOutlineColor() const;
+
+	void setOutlineSize(const glm::vec3& size);
+	[[nodiscard]] glm::vec3 getOutlineSize() const;
+
 protected:
 	void recalculateMatrices();
 	virtual void setVertices() = 0;
@@ -127,7 +136,7 @@ protected:
 	glm::vec3 position_{0.f, 0.f, 0.f};
 	glm::vec3 rotation_{};
 	bool matricesAreDirty_ = true;
-	bool isDrawOutline_ = true;
+	bool isDrawOutline_ = false;
 	glm::mat4 cachedModelMatrix_ = glm::mat4(1.f);
 	bool isReverseMatrixCalculating_ = false;
 	Texture* texture_ = nullptr;

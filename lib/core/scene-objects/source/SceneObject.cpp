@@ -379,6 +379,8 @@ void SceneObject::draw(ShaderPack& shaderPack, const Lightning& lightning, Camer
 {
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	glStencilMask(0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
 	recalculateMatrices();
 
 	auto& shader = shaderPack["triangle"];
@@ -522,4 +524,34 @@ Texture* SceneObject::getTexture()
 const Texture* SceneObject::getTexture() const
 {
 	return texture_;
+}
+
+void SceneObject::setOutlineStatus(bool isEnable)
+{
+	isDrawOutline_ = isEnable;
+}
+
+bool SceneObject::getOutlineStatus() const
+{
+	return isDrawOutline_;
+}
+
+void SceneObject::setOutlineColor(const Color4& color)
+{
+	outlineColor_ = color;
+}
+
+Color4 SceneObject::getOutlineColor() const
+{
+	return outlineColor_;
+}
+
+void SceneObject::setOutlineSize(const glm::vec3& size)
+{
+	outlineSize_ = size;
+}
+
+glm::vec3 SceneObject::getOutlineSize() const
+{
+	return outlineSize_;
 }
