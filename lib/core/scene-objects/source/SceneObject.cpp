@@ -455,7 +455,6 @@ void SceneObject::tryDrawOutline(ShaderPack& shaderPack, Camera& camera)
 	}
 
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-	glStencilMask(0x00);
 	glDisable(GL_CULL_FACE);
 
 	scale(outlineSize_);
