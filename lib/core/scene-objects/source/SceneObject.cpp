@@ -22,7 +22,12 @@
 
 #include "SceneObject.h"
 
+#include "Camera.h"
+#include "Image.h"
+#include "ShaderPack.h"
+#include "Texture.h"
 #include "WorldVariables.h"
+#include "glad.h"
 #include "glm/gtx/transform.hpp"
 
 #include <algorithm>
@@ -173,6 +178,11 @@ void SceneObject::rotateY(float y)
 	}
 }
 
+float SceneObject::getRotationY() const
+{
+	return rotation_.y;
+}
+
 void SceneObject::setRotationZ(float z)
 {
 	rotation_.z = z;
@@ -198,9 +208,21 @@ float SceneObject::getRotationZ() const
 	return rotation_.z;
 }
 
-float SceneObject::getRotationY() const
+void SceneObject::setScale(const glm::vec3& value)
 {
-	return rotation_.y;
+	scale_ = value;
+	matricesAreDirty_ = true;
+}
+
+void SceneObject::scale(const glm::vec3& value)
+{
+	scale_ += value;
+	matricesAreDirty_ = true;
+}
+
+glm::vec3 SceneObject::getScale() const
+{
+	return scale_;
 }
 
 void SceneObject::setMaxPitch(float value)
@@ -258,7 +280,10 @@ void SceneObject::recalculateMatrices()
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
 			cachedModelMatrix_ = glm::rotate(cachedModelMatrix_, glm::radians(rotation_.z), glm::vec3(0.f, 0.f, 1.f));
+			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, -origin_);
 
+			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);
+			cachedModelMatrix_ = glm::scale(cachedModelMatrix_, scale_);
 			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, -origin_);
 		}
 		else
@@ -269,6 +294,7 @@ void SceneObject::recalculateMatrices()
 
 			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, position_);
 			cachedModelMatrix_ = glm::translate(cachedModelMatrix_, origin_);
+			cachedModelMatrix_ = glm::scale(cachedModelMatrix_, scale_);
 		}
 
 		onRecalculateMatrices.trigger();
@@ -347,4 +373,153 @@ void SceneObject::setOrigin(const glm::vec3& origin)
 const glm::vec3& SceneObject::getOrigin() const
 {
 	return origin_;
+}
+
+void SceneObject::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera)
+{
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+	recalculateMatrices();
+
+	auto& shader = shaderPack["triangle"];
+	shader.use();
+
+	if (texture_)
+	{
+		texture_->bind();
+		if (isDirtyTexture_)
+		{
+			texture_->loadToGpu();
+			isDirtyTexture_ = false;
+		}
+	}
+	if (!vao_.isGenerated())
+	{
+		vao_.generate();
+	}
+	if (!vbo_.isGenerated())
+	{
+		vbo_.generate();
+	}
+
+	vao_.bind();
+	vbo_.bind();
+
+	if (verticesAreDirty_)
+	{
+		setVertices();
+		vbo_.data(triangles_);
+		verticesAreDirty_ = false;
+	}
+
+	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 10 * sizeof(float), nullptr);
+	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(4, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(8 * sizeof(float)));
+
+	shader.uniform("uProjectionAndView", false, camera.getMatrix());
+	shader.uniform("uModel", false, cachedModelMatrix_);
+
+	shader.uniform("uAmbientLightColor", lightning.ambient.lightColor);
+	shader.uniform("uAmbientLightDirection", lightning.ambient.direction);
+	shader.uniform("uAmbientLightMaxDark", lightning.ambient.maxDark);
+
+	shader.uniform("uSpecularColor", lightning.specular.lightColor);
+	shader.uniform("uSpecularPosition", lightning.specular.position);
+	shader.uniform("uSpecularIntensity", lightning.specular.intensity);
+	shader.uniform("uSpecularPow", lightning.specular.specularPow);
+	shader.uniform("uViewPosition", camera.getPosition());
+
+	if (texture_)
+	{
+		shader.uniform("uAtlasSize", texture_->getImage()->getSize());
+	}
+
+	Gl::drawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(triangles_.size()) * Triangle::verticesCount);
+
+	if (texture_)
+	{
+		texture_->unbind();
+	}
+
+	tryDrawOutline(shaderPack, camera);
+}
+
+void SceneObject::tryDrawOutline(ShaderPack& shaderPack, Camera& camera)
+{
+	if (!isDrawOutline_)
+	{
+		return;
+	}
+
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	glDisable(GL_CULL_FACE);
+
+	scale(outlineSize_);
+	recalculateMatrices();
+
+	auto& shader = shaderPack["outline"];
+	shader.use();
+	if (texture_)
+	{
+		texture_->bind();
+		if (isDirtyTexture_)
+		{
+			texture_->loadToGpu();
+			isDirtyTexture_ = false;
+		}
+	}
+	if (!vao_.isGenerated())
+	{
+		vao_.generate();
+	}
+	if (!vbo_.isGenerated())
+	{
+		vbo_.generate();
+	}
+
+	vao_.bind();
+	vbo_.bind();
+
+	if (verticesAreDirty_)
+	{
+		setVertices();
+		vbo_.data(triangles_);
+		verticesAreDirty_ = false;
+	}
+
+	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 10 * sizeof(float), nullptr);
+	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
+	Gl::Vao::vertexAttribPointer(4, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(8 * sizeof(float)));
+
+	shader.uniform("uProjectionAndView", false, camera.getMatrix());
+	shader.uniform("uModel", false, cachedModelMatrix_);
+	shader.uniform("uOutlineColor", toGlColor4(outlineColor_));
+
+	Gl::drawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(triangles_.size()) * Triangle::verticesCount);
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+	glEnable(GL_CULL_FACE);
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	scale(-outlineSize_);
+}
+
+void SceneObject::setTexture(Texture& texture)
+{
+	texture_ = &texture;
+	isDirtyTexture_ = true;
+}
+
+Texture* SceneObject::getTexture()
+{
+	return texture_;
+}
+
+const Texture* SceneObject::getTexture() const
+{
+	return texture_;
 }

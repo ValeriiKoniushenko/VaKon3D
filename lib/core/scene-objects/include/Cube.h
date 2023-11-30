@@ -23,20 +23,13 @@
 #pragma once
 
 #include "SceneObject.h"
-#include "Triangle.h"
-#include "TriangleVbo.h"
 
 class Cube : public SceneObject
 {
 public:
 	inline static const std::size_t sidesCount = 12;
 
-	void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera) override;
 	[[nodiscard]] boost::property_tree::ptree toJson() const override;
-
-	void setTexture(Texture& texture);
-	[[nodiscard]] Texture* getTexture();
-	[[nodiscard]] const Texture* getTexture() const;
 
 	void setSize(float size);
 	[[nodiscard]] float getSize() const;
@@ -48,10 +41,4 @@ private:
 
 private:
 	float size_ = 100.f;
-	bool isDirtyTexture_ = false;
-	bool verticesAreDirty_ = true;
-	Texture* texture_ = nullptr;
-	TriangleVbo vbo_;
-	Vao vao_;
-	std::vector<TriangleVbo::Unit> triangles_;
 };

@@ -22,38 +22,12 @@
 
 #pragma once
 
-#include "SceneObject.h"
-#include "Size.h"
-#include "TriangleVbo.h"
-#include "Vao.h"
+#include "glad.h"
 
-class Camera;
-class ShaderPack;
-class Texture;
-
-class Triangle : public SceneObject
+class Triangle
 {
 public:
+	Triangle() = delete;
+
 	const inline static GLsizei verticesCount = 3;
-
-	Triangle() = default;
-	explicit Triangle(Texture& texture);
-
-	void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera) override;
-
-	void setTexture(Texture& texture);
-	[[nodiscard]] Texture* getTexture();
-	[[nodiscard]] const Texture* getTexture() const;
-	void resetTexture();
-
-	void setVertices(std::vector<TriangleVbo::Unit> vertices);
-	boost::property_tree::ptree toJson() const override;
-
-private:
-	Texture* texture_ = nullptr;
-	Vao vao_;
-	TriangleVbo vbo_;
-	std::vector<TriangleVbo::Unit> vertices_;
-	bool verticesAreDirty_ = true;
-	bool isDirtyTexture_ = true;
 };

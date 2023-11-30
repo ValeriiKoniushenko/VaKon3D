@@ -27,91 +27,9 @@
 #include "ShaderPack.h"
 #include "Texture.h"
 
-void Cube::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera)
-{
-	SceneObject::draw(shaderPack, lightning, camera);
-
-	auto& shader = shaderPack["triangle"];
-	shader.use();
-
-	if (texture_)
-	{
-		texture_->bind();
-		if (isDirtyTexture_)
-		{
-			texture_->loadToGpu();
-			isDirtyTexture_ = false;
-		}
-	}
-	if (!vao_.isGenerated())
-	{
-		vao_.generate();
-	}
-	if (!vbo_.isGenerated())
-	{
-		vbo_.generate();
-	}
-
-	vao_.bind();
-	vbo_.bind();
-
-	if (verticesAreDirty_)
-	{
-		setVertices();
-		vbo_.data(triangles_);
-		verticesAreDirty_ = false;
-	}
-
-	Gl::Vao::vertexAttribPointer(1, 3, Gl::Type::Float, false, 10 * sizeof(float), nullptr);
-	Gl::Vao::vertexAttribPointer(2, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-	Gl::Vao::vertexAttribPointer(3, 3, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(5 * sizeof(float)));
-	Gl::Vao::vertexAttribPointer(4, 2, Gl::Type::Float, false, 10 * sizeof(float), reinterpret_cast<void*>(8 * sizeof(float)));
-
-	shader.uniform("uProjectionAndView", false, camera.getMatrix());
-	shader.uniform("uModel", false, cachedModelMatrix_);
-
-	shader.uniform("uAmbientLightColor", lightning.ambient.lightColor);
-	shader.uniform("uAmbientLightDirection", lightning.ambient.direction);
-	shader.uniform("uAmbientLightMaxDark", lightning.ambient.maxDark);
-
-	shader.uniform("uSpecularColor", lightning.specular.lightColor);
-	shader.uniform("uSpecularPosition", lightning.specular.position);
-	shader.uniform("uSpecularIntensity", lightning.specular.intensity);
-	shader.uniform("uSpecularPow", lightning.specular.specularPow);
-	shader.uniform("uViewPosition", camera.getPosition());
-
-	if (texture_)
-	{
-		shader.uniform("uAtlasSize", texture_->getImage()->getSize());
-	}
-
-	Gl::drawArrays(GL_TRIANGLES, 0, sidesCount * Triangle::verticesCount);
-
-	if (texture_)
-	{
-		texture_->unbind();
-	}
-}
-
 boost::property_tree::ptree Cube::toJson() const
 {
 	return boost::property_tree::ptree();
-}
-
-void Cube::setTexture(Texture& texture)
-{
-	texture_ = &texture;
-	isDirtyTexture_ = true;
-}
-
-Texture* Cube::getTexture()
-{
-	return texture_;
-}
-
-const Texture* Cube::getTexture() const
-{
-	return texture_;
 }
 
 void Cube::setSize(float size)

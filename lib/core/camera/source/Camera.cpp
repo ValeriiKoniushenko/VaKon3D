@@ -131,3 +131,8 @@ glm::vec3 Camera::getPosition() const
 {
 	return -position_;
 }
+
+void Camera::setPosition(const glm::vec3& position)
+{
+	position_ = -position;
+}

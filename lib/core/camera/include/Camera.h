@@ -28,8 +28,11 @@ class Camera : public SceneObject
 {
 public:
 	Camera();
-
+	/** brief: working in global coordinates */
 	[[nodiscard]] glm::vec3 getPosition() const override;
+
+	/** brief: working in global coordinates */
+	void setPosition(const glm::vec3& position) override;
 
 	void rotate(const glm::vec3& value) override;
 
@@ -48,6 +51,11 @@ public:
 	[[nodiscard]] glm::vec2 getSensitive() const;
 
 	[[nodiscard]] boost::property_tree::ptree toJson() const override;
+
+protected:
+	void setVertices() override
+	{
+	}
 
 protected:
 	glm::vec2 sensitive_{3.f, 3.f};

@@ -25,11 +25,15 @@
 #include "Delegate.h"
 #include "JsonPrintable.h"
 #include "Lightning.h"
+#include "Triangle.h"
+#include "TriangleVbo.h"
 #include "Updateable.h"
+#include "Vao.h"
 #include "glm/glm.hpp"
 
 class ShaderPack;
 class Camera;
+class Texture;
 
 class SceneObject : public JsonPrintable, public Updateable
 {
@@ -75,7 +79,10 @@ public:
 	virtual void setRotationZ(float z);
 	virtual void rotateZ(float z);
 	[[nodiscard]] virtual float getRotationZ() const;
-	// TODO: add scaling
+
+	virtual void setScale(const glm::vec3& value);
+	virtual void scale(const glm::vec3& value);
+	[[nodiscard]] virtual glm::vec3 getScale() const;
 
 	virtual void setMaxPitch(float value);
 	[[nodiscard]] virtual float getMaxPitch() const;
@@ -93,17 +100,24 @@ public:
 	[[nodiscard]] float getMaxSpeed() const;
 	[[nodiscard]] float getCurrentSpeed() const;
 
-	virtual void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera){};
+	virtual void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera);
+	virtual void tryDrawOutline(ShaderPack& shaderPack, Camera& camera);
 
 	virtual void setOrigin(const glm::vec3& origin);
 	[[nodiscard]] virtual const glm::vec3& getOrigin() const;
 
+	void setTexture(Texture& texture);
+	[[nodiscard]] Texture* getTexture();
+	[[nodiscard]] const Texture* getTexture() const;
+
 protected:
 	void recalculateMatrices();
+	virtual void setVertices() = 0;
 
 	LambdaMulticastDelegate<void()> onRecalculateMatrices;
 
 protected:
+	glm::vec3 scale_ = glm::vec3(1.f, 1.f, 1.f);
 	glm::vec3 origin_{};
 	float speed_{};
 	float maxSpeed_{200.f};
@@ -113,6 +127,15 @@ protected:
 	glm::vec3 position_{0.f, 0.f, 0.f};
 	glm::vec3 rotation_{};
 	bool matricesAreDirty_ = true;
+	bool isDrawOutline_ = true;
 	glm::mat4 cachedModelMatrix_ = glm::mat4(1.f);
 	bool isReverseMatrixCalculating_ = false;
+	Texture* texture_ = nullptr;
+	TriangleVbo vbo_;
+	Vao vao_;
+	std::vector<TriangleVbo::Unit> triangles_;
+	bool isDirtyTexture_ = false;
+	bool verticesAreDirty_ = true;
+	glm::vec3 outlineSize_ = glm::vec3(.05f);
+	Color4 outlineColor_ = {247, 217, 17, 255};
 };
