@@ -11,6 +11,8 @@ in vec3 ioSurfaceToLight;
 
 uniform vec3 uViewPosition;
 uniform sampler2D uTexture;
+uniform sampler2D uSpecularTexture;
+uniform bool uIsHasSpecularTexture;
 uniform vec3 uAmbientLightColor;
 uniform vec3 uAmbientLightDirection;
 uniform float uAmbientLightMaxDark;
@@ -27,7 +29,12 @@ void main()
     vec3 surfaceToLight = normalize(ioSurfaceToLight);
     vec3 surfaceToView = normalize(ioSurfaceToView);
     vec3 halfVector = normalize(surfaceToView + surfaceToLight);
-    float specularLight = max(pow(dot(normal, halfVector), uSpecularPow) * uSpecularIntensity, 0.f);
+    float specularPow = uSpecularPow;
+    if (uIsHasSpecularTexture)
+    {
+        specularPow = mix(512.f, 4096.f, texture(uSpecularTexture, ioUv).r);
+    }
+    float specularLight = max(pow(dot(normal, halfVector), specularPow) * uSpecularIntensity, 0.f);
 
     vec2 uv = vec2(ioTextureRectSize.x + ioUv.x, ioTextureRectSize.y + ioUv.y);
 

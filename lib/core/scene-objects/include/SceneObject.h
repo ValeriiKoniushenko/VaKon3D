@@ -110,6 +110,10 @@ public:
 	[[nodiscard]] Texture* getTexture();
 	[[nodiscard]] const Texture* getTexture() const;
 
+	void setSpecularTexture(Texture& texture);
+	[[nodiscard]] Texture* getSpecularTexture();
+	[[nodiscard]] const Texture* getSpecularTexture() const;
+
 	void setOutlineStatus(bool isEnable);
 	[[nodiscard]] bool getOutlineStatus() const;
 
@@ -139,7 +143,8 @@ protected:
 	bool isDrawOutline_ = false;
 	glm::mat4 cachedModelMatrix_ = glm::mat4(1.f);
 	bool isReverseMatrixCalculating_ = false;
-	Texture* texture_ = nullptr;
+	Texture* diffuseTexture_ = nullptr;
+	Texture* specularTexture_ = nullptr;
 	TriangleVbo vbo_;
 	Vao vao_;
 	std::vector<TriangleVbo::Unit> triangles_;

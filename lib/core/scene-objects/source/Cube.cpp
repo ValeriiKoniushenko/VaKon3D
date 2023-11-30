@@ -49,7 +49,7 @@ void Cube::setVertices()
 	triangles_.reserve(sidesCount * Triangle::verticesCount);
 
 	using Unit = TriangleVbo::Unit;
-	glm::vec2 textureSize = texture_->getImage()->getSize();
+	glm::vec2 textureSize = diffuseTexture_->getImage()->getSize();
 
 	// front side
 	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, 0.f, 1.f}, {textureSize.x, textureSize.y}});

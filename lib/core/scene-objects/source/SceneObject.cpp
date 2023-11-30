@@ -386,14 +386,31 @@ void SceneObject::draw(ShaderPack& shaderPack, const Lightning& lightning, Camer
 	auto& shader = shaderPack["triangle"];
 	shader.use();
 
-	if (texture_)
+	if (diffuseTexture_)
 	{
-		texture_->bind();
-		if (isDirtyTexture_)
+		Gl::Texture::active(0);
+		diffuseTexture_->bind();
+	}
+	if (specularTexture_)
+	{
+		Gl::Texture::active(1);
+		specularTexture_->bind();
+	}
+	if (isDirtyTexture_)
+	{
+		if (diffuseTexture_)
 		{
-			texture_->loadToGpu();
-			isDirtyTexture_ = false;
+			Gl::Texture::active(0);
+			diffuseTexture_->bind();
+			diffuseTexture_->loadToGpu();
 		}
+		if (specularTexture_)
+		{
+			Gl::Texture::active(1);
+			specularTexture_->bind();
+			specularTexture_->loadToGpu();
+		}
+		isDirtyTexture_ = false;
 	}
 	if (!vao_.isGenerated())
 	{
@@ -432,18 +449,32 @@ void SceneObject::draw(ShaderPack& shaderPack, const Lightning& lightning, Camer
 	shader.uniform("uSpecularPow", lightning.specular.specularPow);
 	shader.uniform("uViewPosition", camera.getPosition());
 
-	if (texture_)
+	shader.uniform("uTexture", 0);
+	shader.uniform("uSpecularTexture", 1);
+	if (specularTexture_)
 	{
-		shader.uniform("uAtlasSize", texture_->getImage()->getSize());
+		shader.uniform("uIsHasSpecularTexture", true);
+	}
+	else
+	{
+		shader.uniform("uIsHasSpecularTexture", false);
+	}
+
+	if (diffuseTexture_)
+	{
+		shader.uniform("uAtlasSize", diffuseTexture_->getImage()->getSize());
 	}
 
 	Gl::drawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(triangles_.size()) * Triangle::verticesCount);
 
-	if (texture_)
+	if (diffuseTexture_)
 	{
-		texture_->unbind();
+		diffuseTexture_->unbind();
 	}
-
+	if (specularTexture_)
+	{
+		specularTexture_->unbind();
+	}
 	tryDrawOutline(shaderPack, camera);
 }
 
@@ -462,12 +493,12 @@ void SceneObject::tryDrawOutline(ShaderPack& shaderPack, Camera& camera)
 
 	auto& shader = shaderPack["outline"];
 	shader.use();
-	if (texture_)
+	if (diffuseTexture_)
 	{
-		texture_->bind();
+		diffuseTexture_->bind();
 		if (isDirtyTexture_)
 		{
-			texture_->loadToGpu();
+			diffuseTexture_->loadToGpu();
 			isDirtyTexture_ = false;
 		}
 	}
@@ -511,18 +542,34 @@ void SceneObject::tryDrawOutline(ShaderPack& shaderPack, Camera& camera)
 
 void SceneObject::setTexture(Texture& texture)
 {
-	texture_ = &texture;
+	diffuseTexture_ = &texture;
 	isDirtyTexture_ = true;
 }
 
 Texture* SceneObject::getTexture()
 {
-	return texture_;
+	return diffuseTexture_;
 }
 
 const Texture* SceneObject::getTexture() const
 {
-	return texture_;
+	return diffuseTexture_;
+}
+
+void SceneObject::setSpecularTexture(Texture& texture)
+{
+	specularTexture_ = &texture;
+	isDirtyTexture_ = true;
+}
+
+Texture* SceneObject::getSpecularTexture()
+{
+	return specularTexture_;
+}
+
+const Texture* SceneObject::getSpecularTexture() const
+{
+	return specularTexture_;
 }
 
 void SceneObject::setOutlineStatus(bool isEnable)
