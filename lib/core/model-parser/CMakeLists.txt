@@ -5,17 +5,17 @@ file(
 )
 
 add_library(
-	Scene-Objects STATIC
+	Model-Parser STATIC
 	${Sources}
 )
 
 target_include_directories(
-	Scene-Objects PUBLIC
+	Model-Parser PUBLIC
 	include
 )
 
 target_link_libraries(
-	Scene-Objects PUBLIC
+	Model-Parser PUBLIC
 	Utils
 	glfw
 	Glad
@@ -27,6 +27,4 @@ target_link_libraries(
 	FreeType-Wrapper
 	Camera
 	World
-	Graphics
-	Model-Parser
 )

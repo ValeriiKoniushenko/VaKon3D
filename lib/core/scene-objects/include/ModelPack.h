@@ -24,17 +24,29 @@
 
 #include "SceneObject.h"
 
-class Cube : public SceneObject
+#include <filesystem>
+#include <unordered_map>
+
+class ModelPack : public Utils::CopyableAndMoveable, public JsonPrintable
 {
 public:
-	[[nodiscard]] boost::property_tree::ptree toJson() const override;
+	inline static const std::vector<std::string> permissibleFileFormats = {".obj"};
+	boost::property_tree::ptree toJson() const override;
+	void loadFromFile(const std::filesystem::path& path);
 
-	void setSize(float size);
-	[[nodiscard]] float getSize() const;
+	[[nodiscard]] SceneObject& getModel(const std::string& name);
+	[[nodiscard]] const SceneObject& getModel(const std::string& name) const;
+	[[nodiscard]] SceneObject& operator[](const std::string& name);
+	[[nodiscard]] const SceneObject& operator[](const std::string& name) const;
+	[[nodiscard]] std::unordered_map<std::string, SceneObject>::iterator begin();
+	[[nodiscard]] std::unordered_map<std::string, SceneObject>::const_iterator begin() const;
+	[[nodiscard]] std::unordered_map<std::string, SceneObject>::iterator end();
+	[[nodiscard]] std::unordered_map<std::string, SceneObject>::const_iterator end() const;
 
 private:
-	void setVertices() override;
+	[[nodiscard]] bool validateFileFormat(const std::filesystem::path& path) const;
+	void requireValidFilePath(const std::filesystem::path& path) const;
 
-private:
-	float size_ = 100.f;
+protected:
+	std::unordered_map<std::string, SceneObject> models_;
 };

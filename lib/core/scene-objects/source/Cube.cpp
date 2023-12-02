@@ -22,9 +22,7 @@
 
 #include "Cube.h"
 
-#include "Camera.h"
 #include "Image.h"
-#include "ShaderPack.h"
 #include "Texture.h"
 
 boost::property_tree::ptree Cube::toJson() const
@@ -46,7 +44,6 @@ float Cube::getSize() const
 void Cube::setVertices()
 {
 	triangles_.clear();
-	triangles_.reserve(sidesCount * Triangle::verticesCount);
 
 	using Unit = TriangleVbo::Unit;
 	glm::vec2 textureSize = diffuseTexture_->getImage()->getSize();
@@ -93,9 +90,4 @@ void Cube::setVertices()
 	triangles_.emplace_back(Unit{{size_, 0.f, -size_}, {1.f, 1.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
 	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
 	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
-}
-
-void Cube::update()
-{
-	SceneObject::update();
 }

@@ -123,4 +123,19 @@ bool isZero(float n1, float E)
 	return fabs(n1) < E;
 }
 
+std::string toString(const std::vector<std::string>& data, const std::string& delimiter)
+{
+	std::string out;
+	for (std::size_t i = 0; i < data.size(); ++i)
+	{
+		out += data.at(i);
+		if (i != data.size() - 1)
+		{
+			out += delimiter;
+		}
+	}
+
+	return out;
+}
+
 }	 // namespace Utils

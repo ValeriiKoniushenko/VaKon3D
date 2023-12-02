@@ -601,3 +601,36 @@ glm::vec3 SceneObject::getOutlineSize() const
 {
 	return outlineSize_;
 }
+
+void SceneObject::setName(const std::string& name)
+{
+	name_ = name;
+}
+
+const std::string& SceneObject::getName() const
+{
+	return name_;
+}
+
+std::string& SceneObject::getName()
+{
+	return name_;
+}
+
+void SceneObject::loadVertices(std::vector<TriangleVbo::Unit>& itWillBeMoved)
+{
+	triangles_ = std::move(itWillBeMoved);
+}
+
+boost::property_tree::ptree SceneObject::toJson() const
+{
+	return boost::property_tree::ptree();
+}
+
+void SceneObject::setTextureRect(glm::vec2 rect)
+{
+	for (auto& el : triangles_)
+	{
+		el.textureRect = rect;
+	}
+}

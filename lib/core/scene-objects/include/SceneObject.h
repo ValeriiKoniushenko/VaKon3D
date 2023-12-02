@@ -123,13 +123,24 @@ public:
 	void setOutlineSize(const glm::vec3& size);
 	[[nodiscard]] glm::vec3 getOutlineSize() const;
 
+	void setName(const std::string& name);
+	[[nodiscard]] const std::string& getName() const;
+	[[nodiscard]] std::string& getName();
+
+	void loadVertices(std::vector<TriangleVbo::Unit>& itWillBeMoved);
+
+	void setTextureRect(glm::vec2 rect);
+
+	boost::property_tree::ptree toJson() const override;
+
 protected:
 	void recalculateMatrices();
-	virtual void setVertices() = 0;
+	virtual void setVertices(){};
 
 	LambdaMulticastDelegate<void()> onRecalculateMatrices;
 
 protected:
+	std::string name_ = "None";
 	glm::vec3 scale_ = glm::vec3(1.f, 1.f, 1.f);
 	glm::vec3 origin_{};
 	float speed_{};
@@ -150,6 +161,6 @@ protected:
 	std::vector<TriangleVbo::Unit> triangles_;
 	bool isDirtyTexture_ = false;
 	bool verticesAreDirty_ = true;
-	glm::vec3 outlineSize_ = glm::vec3(.05f);
+	glm::vec3 outlineSize_ = glm::vec3(.1f);
 	Color4 outlineColor_ = {247, 217, 17, 255};
 };
