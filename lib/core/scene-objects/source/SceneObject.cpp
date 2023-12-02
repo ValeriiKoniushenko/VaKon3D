@@ -643,7 +643,12 @@ void SceneObject::tryDrawCoordinateSystem(ShaderPack& shaderPack, Camera& camera
 	{
 		return;
 	}
-	
+
+	auto& shader = shaderPack["line"];
+	shader.use();
+
+	shader.uniform("uViewPosition", camera.getPosition());
+
 	lineX_.setWidth(lineWidth_);
 	lineX_.setColor({0, 42, 255});
 	glm::vec3 lineX = glm::vec3(lineSize_, 0.f, 0.f);

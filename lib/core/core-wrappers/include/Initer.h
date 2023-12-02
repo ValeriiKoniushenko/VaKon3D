@@ -31,6 +31,7 @@
 #include "Size.h"
 #include "Window.h"
 #include "World.h"
+#include "WorldVariables.h"
 
 #include <glm/glm.hpp>
 
@@ -55,5 +56,6 @@ public:
 		GladWrapper::initGlad();
 		GetWorld().init();
 		GetFreeTypeLibrary().init();
+		GetWorldVariables()["tick"] = 0.f;
 	}
 };

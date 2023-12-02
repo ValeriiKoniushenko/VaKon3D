@@ -22,46 +22,39 @@
 
 #pragma once
 
-#include "SceneObject.h"
+#include "Color.h"
+#include "NotCopyableButMovable.h"
+#include "Vao.h"
+#include "Vbo.h"
+#include "glm/glm.hpp"
 
-class Camera : public SceneObject
+#include <vector>
+
+class ShaderPack;
+class Camera;
+
+class Grid : public Utils::NotCopyableButMovable
 {
 public:
-	Camera();
-	/** brief: working in global coordinates */
-	[[nodiscard]] glm::vec3 getPosition() const override;
+	Grid();
 
-	/** brief: working in global coordinates */
-	void setPosition(const glm::vec3& position) override;
+	void setColor(const Color4& color);
 
-	void rotate(const glm::vec3& value) override;
+	void generate();
 
-	[[nodiscard]] const glm::mat4& getMatrix();
+	void draw(ShaderPack& shaderPack, Camera& camera);
 
-	void setFov(float fov);
-	[[nodiscard]] float getFov() const;
+	void setWidth(GLfloat width);
+	[[nodiscard]] GLfloat getWidth() const;
 
-	void setNear(float value);
-	[[nodiscard]] float getNear() const;
+	void setSize(int count);
 
-	void setFar(float value);
-	[[nodiscard]] float getFar() const;
-
-	void setSensitive(glm::vec2 value);
-	[[nodiscard]] glm::vec2 getSensitive() const;
-
-	[[nodiscard]] boost::property_tree::ptree toJson() const override;
-
-protected:
-	void setVertices() override
-	{
-	}
-
-protected:
-	glm::vec2 sensitive_{3.f, 3.f};
-	glm::mat4 cachedProjMatrix_ = glm::mat4(1.f);
-	glm::mat4 cachedCalculatedMatrix_ = glm::mat4(1.f);
-	float fov_ = 90.f;
-	float far_ = 10'000.f;
-	float near_ = 1.f;
+private:
+	int count_ = 500;
+	float gap_ = 50.f;
+	float size_ = 0.f;
+	GLfloat width_{1.f};
+	Vbo vbo;
+	Vao vao;
+	Color4 lineColor_;
 };
