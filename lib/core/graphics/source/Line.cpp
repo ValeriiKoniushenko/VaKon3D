@@ -20,52 +20,65 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputAction.h"
+#include "Line.h"
 
-KeyboardInputAction::KeyboardInputAction(const std::string& name, Keyboard::Key key) : InputAction(name, key)
+#include "Camera.h"
+#include "ShaderPack.h"
+
+Line::Line()
 {
+	vao.generate();
+	vbo.generate();
+
+	vao.bind();
+	vbo.bind();
+
+	Gl::Vao::vertexAttribPointer(0, 3, Gl::Type::Float, false, 3 * sizeof(float), nullptr);
 }
 
-bool KeyboardInputAction::isKeyPressed() const
+void Line::setStartAndEndPoint(glm::vec3 start, glm::vec3 end)
 {
-	if (key_)
-	{
-		return Keyboard::isKeyPressed(key_.value());
-	}
-	return false;
+	startPoint_ = start;
+	endPoint_ = end;
+
+	std::vector<float> vertices = {
+		start.x,
+		start.y,
+		start.z,
+		end.x,
+		end.y,
+		end.z,
+	};
+
+	vbo.bind();
+	vbo.data(vertices);
 }
 
-MouseInputAction::MouseInputAction(const std::string& name, Mouse::Key key) : InputAction(name, key)
+void Line::setColor(const Color4& color)
 {
-	init();
+	lineColor_ = color;
 }
 
-MouseInputAction::MouseInputAction(const std::string& name) : InputAction(name)
+int Line::draw(ShaderPack& shaderPack, Camera& camera)
 {
-	init();
+	auto& shader = shaderPack["line"];
+	shader.use();
+
+	shader.uniform("uLineColor", toGlColor4(lineColor_));
+	shader.uniform("uProjectionView", false, camera.getMatrix());
+
+	vao.bind();
+	glLineWidth(width_);
+	Gl::drawArrays(GL_LINES, 0, 2);
+	return 1;
 }
 
-bool MouseInputAction::isKeyPressed() const
+void Line::setWidth(GLfloat width)
 {
-	if (key_)
-	{
-		return Mouse::isKeyPressed(key_.value());
-	}
-	return false;
+	width_ = width;
 }
 
-void MouseInputAction::update()
+GLfloat Line::getWidth() const
 {
-	InputAction::update();
-
-	if (Mouse::getPosition(GetWindow()) != lastMousePosition_)
-	{
-		onMove.trigger(Mouse::getPosition(GetWindow()) - lastMousePosition_);
-		lastMousePosition_ = Mouse::getPosition(GetWindow());
-	}
-}
-
-void MouseInputAction::init()
-{
-	onActionPrivate_.subscribe([this]() { onMouseClick.trigger(Mouse::getPosition(GetWindow())); });
+	return width_;
 }

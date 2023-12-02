@@ -84,6 +84,7 @@ public:
 					if (std::chrono::duration_cast<TimeT>(std::chrono::system_clock::now() - lastUpdate_) >= frequency_)
 					{
 						onAction.trigger();
+						onActionPrivate_.trigger();
 						lastUpdate_ = std::chrono::system_clock::now();
 						lastState_ = State::Pressed;
 					}
@@ -120,6 +121,7 @@ public:
 
 protected:
 	[[nodiscard]] virtual bool isKeyPressed() const = 0;
+	LambdaMulticastDelegate<void()> onActionPrivate_;
 
 protected:
 	std::string name_;
@@ -146,6 +148,7 @@ public:
 	explicit MouseInputAction(const std::string& name);
 
 	LambdaMulticastDelegate<void(glm::ivec2)> onMove;
+	LambdaMulticastDelegate<void(glm::ivec2)> onMouseClick;
 
 	void update() override;
 
@@ -153,5 +156,7 @@ protected:
 	[[nodiscard]] bool isKeyPressed() const override;
 
 private:
+	void init();
+
 	glm::ivec2 lastMousePosition_ = Mouse::getPosition(GetWindow());
 };

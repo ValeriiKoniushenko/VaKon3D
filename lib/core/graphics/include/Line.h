@@ -20,52 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "InputAction.h"
+#pragma once
 
-KeyboardInputAction::KeyboardInputAction(const std::string& name, Keyboard::Key key) : InputAction(name, key)
+#include "Color.h"
+#include "NotCopyableButMovable.h"
+#include "Vao.h"
+#include "Vbo.h"
+#include "glm/glm.hpp"
+
+#include <vector>
+
+class ShaderPack;
+class Camera;
+
+class Line : public Utils::NotCopyableButMovable
 {
-}
+public:
+	Line();
 
-bool KeyboardInputAction::isKeyPressed() const
-{
-	if (key_)
-	{
-		return Keyboard::isKeyPressed(key_.value());
-	}
-	return false;
-}
+	void setStartAndEndPoint(glm::vec3 start, glm::vec3 end);
 
-MouseInputAction::MouseInputAction(const std::string& name, Mouse::Key key) : InputAction(name, key)
-{
-	init();
-}
+	void setColor(const Color4& color);
 
-MouseInputAction::MouseInputAction(const std::string& name) : InputAction(name)
-{
-	init();
-}
+	int draw(ShaderPack& shaderPack, Camera& camera);
 
-bool MouseInputAction::isKeyPressed() const
-{
-	if (key_)
-	{
-		return Mouse::isKeyPressed(key_.value());
-	}
-	return false;
-}
+	void setWidth(GLfloat width);
+	[[nodiscard]] GLfloat getWidth() const;
 
-void MouseInputAction::update()
-{
-	InputAction::update();
-
-	if (Mouse::getPosition(GetWindow()) != lastMousePosition_)
-	{
-		onMove.trigger(Mouse::getPosition(GetWindow()) - lastMousePosition_);
-		lastMousePosition_ = Mouse::getPosition(GetWindow());
-	}
-}
-
-void MouseInputAction::init()
-{
-	onActionPrivate_.subscribe([this]() { onMouseClick.trigger(Mouse::getPosition(GetWindow())); });
-}
+private:
+	GLfloat width_{1.f};
+	Vbo vbo;
+	Vao vao;
+	glm::vec3 startPoint_{};
+	glm::vec3 endPoint_{};
+	Color4 lineColor_;
+};
