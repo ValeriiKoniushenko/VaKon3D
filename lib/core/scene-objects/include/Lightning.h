@@ -41,4 +41,11 @@ struct Lightning
 		float intensity = 0.3f;
 		int specularPow = 1024;
 	} specular;
+
+	struct For
+	{
+		Color4 color = {0, 0, 0, 0};
+		float minDistance = 500.f;
+		float maxDistance = 8000.f;
+	} fog;
 };

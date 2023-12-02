@@ -75,7 +75,7 @@ void Grid::setColor(const Color4& color)
 	lineColor_ = color;
 }
 
-void Grid::draw(ShaderPack& shaderPack, Camera& camera)
+void Grid::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera)
 {
 	auto& shader = shaderPack["line"];
 	shader.use();
@@ -83,6 +83,9 @@ void Grid::draw(ShaderPack& shaderPack, Camera& camera)
 	shader.uniform("uViewPosition", camera.getPosition());
 	shader.uniform("uLineColor", toGlColor4(lineColor_));
 	shader.uniform("uProjectionView", false, camera.getMatrix());
+	shader.uniform("uFogColor", toGlColor4(lightning.fog.color));
+	shader.uniform("uFogMinDistance", lightning.fog.minDistance);
+	shader.uniform("uFogMaxDistance", lightning.fog.maxDistance);
 
 	vao.bind();
 	glDepthFunc(GL_ALWAYS);

@@ -31,6 +31,7 @@
 #include <vector>
 
 class ShaderPack;
+class Lightning;
 class Camera;
 
 class Grid : public Utils::NotCopyableButMovable
@@ -42,7 +43,7 @@ public:
 
 	void generate();
 
-	void draw(ShaderPack& shaderPack, Camera& camera);
+	void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera);
 
 	void setWidth(GLfloat width);
 	[[nodiscard]] GLfloat getWidth() const;

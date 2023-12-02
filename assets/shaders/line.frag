@@ -3,12 +3,12 @@ out vec4 FragColor;
 
 uniform vec4 uLineColor;
 uniform vec3 uViewPosition;
+uniform vec4 uFogColor;
+uniform float uFogMinDistance;
+uniform float uFogMaxDistance;
 
 in vec4 ioFragColorPos;
 
-vec4 uFogColor = vec4(0.1, 0.1, 0.1, 0.0);
-float uFogMinDistance = 500;
-float uFogMaxDistance = 5000;
 
 float getFogFactor(float d)
 {
