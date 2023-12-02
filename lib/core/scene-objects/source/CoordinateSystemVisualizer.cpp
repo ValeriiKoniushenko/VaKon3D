@@ -20,42 +20,4 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
-#include "Color.h"
-#include "NotCopyableButMovable.h"
-#include "Vao.h"
-#include "Vbo.h"
-#include "glm/glm.hpp"
-
-#include <vector>
-
-class ShaderPack;
-class Lightning;
-class Camera;
-
-class Grid : public Utils::NotCopyableButMovable
-{
-public:
-	Grid();
-
-	void setColor(const Color4& color);
-
-	void generate();
-
-	void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera);
-
-	void setWidth(GLfloat width);
-	[[nodiscard]] GLfloat getWidth() const;
-
-	void setSize(int count);
-
-private:
-	int count_ = 500;
-	float gap_ = 100.f;
-	float size_ = 0.f;
-	GLfloat width_{1.f};
-	Vbo vbo;
-	Vao vao;
-	Color4 lineColor_;
-};
+#include "CoordinateSystemVisualizer.h"
