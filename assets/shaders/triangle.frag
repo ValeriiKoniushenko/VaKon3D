@@ -19,6 +19,29 @@ uniform float uAmbientLightMaxDark;
 uniform vec3 uSpecularColor;
 uniform float uSpecularIntensity;
 uniform int uSpecularPow;
+uniform vec4 uFogColor;
+uniform float uFogMinDistance;
+uniform float uFogMaxDistance;
+
+float getFogFactor(float d)
+{
+    if (d >= uFogMaxDistance)
+    {
+        return 1;
+    }
+    if (d <= uFogMinDistance)
+    {
+        return 0;
+    }
+
+    return 1 - (uFogMaxDistance - d) / (uFogMaxDistance - uFogMinDistance);
+}
+
+vec4 calcFog(vec4 color)
+{
+    float d = distance(uViewPosition, ioFragmentPosition);
+    return mix(color, uFogColor, getFogFactor(d));
+}
 
 void main()
 {
@@ -41,4 +64,5 @@ void main()
     oColor = texture(uTexture, uv) * vec4(uAmbientLightColor, 1.f);
     oColor.rgb *= diffuseLight;
     oColor.rgb += specularLight * uSpecularColor;
+    oColor = calcFog(oColor);
 }

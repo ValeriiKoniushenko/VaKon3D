@@ -9,7 +9,6 @@ uniform float uFogMaxDistance;
 
 in vec4 ioFragColorPos;
 
-
 float getFogFactor(float d)
 {
     if (d >= uFogMaxDistance)

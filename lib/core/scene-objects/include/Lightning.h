@@ -45,7 +45,7 @@ struct Lightning
 	struct For
 	{
 		Color4 color = {0, 0, 0, 0};
-		float minDistance = 500.f;
+		float minDistance = 4000.f;
 		float maxDistance = 8000.f;
 	} fog;
 };

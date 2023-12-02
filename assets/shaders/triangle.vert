@@ -25,7 +25,7 @@ void main()
     ioUv = uAtlasSize * aUv / uAtlasSize;//calculate texture position at the atlas by according to atlas size
     ioTextureRectSize = aTextureRectSize / uAtlasSize;//calculate texture size by according to atlas size
 
-    ioFragmentPosition = mat3(uModel) * aPosition;
+    ioFragmentPosition = vec3(uModel * vec4(aPosition, 1.f));
     ioSurfaceToLight = uSpecularPosition - (uModel * vec4(aPosition, 1.f)).xyz;
     ioSurfaceToView = uViewPosition - (uModel * vec4(aPosition, 1.f)).xyz;
 
