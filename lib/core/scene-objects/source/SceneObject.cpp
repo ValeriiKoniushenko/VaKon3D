@@ -639,6 +639,11 @@ void SceneObject::setTextureRect(glm::vec2 rect)
 
 void SceneObject::tryDrawCoordinateSystem(ShaderPack& shaderPack, Camera& camera)
 {
+	if (!isDrawSystemCoord_)
+	{
+		return;
+	}
+	
 	lineX_.setWidth(lineWidth_);
 	lineX_.setColor({0, 42, 255});
 	glm::vec3 lineX = glm::vec3(lineSize_, 0.f, 0.f);
@@ -672,4 +677,24 @@ void SceneObject::tryDrawCoordinateSystem(ShaderPack& shaderPack, Camera& camera
 	lineX_.draw(shaderPack, camera);
 	lineY_.draw(shaderPack, camera);
 	lineZ_.draw(shaderPack, camera);
+}
+
+void SceneObject::toggleOutline()
+{
+	isDrawOutline_ = !isDrawOutline_;
+}
+
+bool SceneObject::isDrawCoordinateSystem() const
+{
+	return isDrawSystemCoord_;
+}
+
+void SceneObject::setDrawCoordinateSystem(bool isDraw)
+{
+	isDrawSystemCoord_ = isDraw;
+}
+
+void SceneObject::toggleDrawCoordinateSystem()
+{
+	isDrawSystemCoord_ = !isDrawSystemCoord_;
 }

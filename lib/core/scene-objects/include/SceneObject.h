@@ -115,7 +115,12 @@ public:
 	[[nodiscard]] const Texture* getSpecularTexture() const;
 
 	void setOutlineStatus(bool isEnable);
+	void toggleOutline();
 	[[nodiscard]] bool getOutlineStatus() const;
+
+	[[nodiscard]] bool isDrawCoordinateSystem() const;
+	void setDrawCoordinateSystem(bool isDraw);
+	void toggleDrawCoordinateSystem();
 
 	void setOutlineColor(const Color4& color);
 	[[nodiscard]] Color4 getOutlineColor() const;
@@ -170,5 +175,5 @@ protected:
 	Line lineZ_;
 	inline static const float lineWidth_ = 5.f;
 	inline static const float lineSize_ = 150.f;
-	bool isDrawSystemCoord_ = true;
+	bool isDrawSystemCoord_ = false;
 };
