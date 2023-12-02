@@ -42,7 +42,7 @@ public:
 
 	void setColor(const Color4& color);
 
-	int draw(ShaderPack& shaderPack, Camera& camera);
+	void draw(ShaderPack& shaderPack, Camera& camera);
 
 	void setWidth(GLfloat width);
 	[[nodiscard]] GLfloat getWidth() const;

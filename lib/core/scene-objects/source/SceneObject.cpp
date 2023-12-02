@@ -475,7 +475,9 @@ void SceneObject::draw(ShaderPack& shaderPack, const Lightning& lightning, Camer
 	{
 		specularTexture_->unbind();
 	}
+
 	tryDrawOutline(shaderPack, camera);
+	tryDrawCoordinateSystem(shaderPack, camera);
 }
 
 void SceneObject::tryDrawOutline(ShaderPack& shaderPack, Camera& camera)
@@ -633,4 +635,41 @@ void SceneObject::setTextureRect(glm::vec2 rect)
 	{
 		el.textureRect = rect;
 	}
+}
+
+void SceneObject::tryDrawCoordinateSystem(ShaderPack& shaderPack, Camera& camera)
+{
+	lineX_.setWidth(lineWidth_);
+	lineX_.setColor({0, 42, 255});
+	glm::vec3 lineX = glm::vec3(lineSize_, 0.f, 0.f);
+	glm::mat4 lineXModel = glm::mat4(1.f);
+	lineXModel = glm::rotate(lineXModel, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
+	lineXModel = glm::rotate(lineXModel, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+	lineXModel = glm::rotate(lineXModel, glm::radians(rotation_.z), glm::vec3(0.f, 0.f, 1.f));
+	lineX = glm::mat3(lineXModel) * lineX;
+	lineX_.setStartAndEndPoint(position_, position_ + lineX);
+
+	lineY_.setWidth(lineWidth_);
+	lineY_.setColor({255, 0, 0});
+	glm::vec3 lineY = glm::vec3(0.f, lineSize_, 0.f);
+	glm::mat4 lineYModel = glm::mat4(1.f);
+	lineYModel = glm::rotate(lineYModel, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
+	lineYModel = glm::rotate(lineYModel, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+	lineYModel = glm::rotate(lineYModel, glm::radians(rotation_.z), glm::vec3(0.f, 0.f, 1.f));
+	lineY = glm::mat3(lineYModel) * lineY;
+	lineY_.setStartAndEndPoint(position_, position_ + lineY);
+
+	lineZ_.setWidth(lineWidth_);
+	lineZ_.setColor({0, 255, 42});
+	glm::vec3 lineZ = glm::vec3(0.f, 0.f, lineSize_);
+	glm::mat4 lineZModel = glm::mat4(1.f);
+	lineZModel = glm::rotate(lineZModel, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
+	lineZModel = glm::rotate(lineZModel, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
+	lineZModel = glm::rotate(lineZModel, glm::radians(rotation_.z), glm::vec3(0.f, 0.f, 1.f));
+	lineZ = glm::mat3(lineZModel) * lineZ;
+	lineZ_.setStartAndEndPoint(position_, position_ + lineZ);
+
+	lineX_.draw(shaderPack, camera);
+	lineY_.draw(shaderPack, camera);
+	lineZ_.draw(shaderPack, camera);
 }

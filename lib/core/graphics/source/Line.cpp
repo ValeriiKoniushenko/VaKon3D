@@ -59,7 +59,7 @@ void Line::setColor(const Color4& color)
 	lineColor_ = color;
 }
 
-int Line::draw(ShaderPack& shaderPack, Camera& camera)
+void Line::draw(ShaderPack& shaderPack, Camera& camera)
 {
 	auto& shader = shaderPack["line"];
 	shader.use();
@@ -68,9 +68,10 @@ int Line::draw(ShaderPack& shaderPack, Camera& camera)
 	shader.uniform("uProjectionView", false, camera.getMatrix());
 
 	vao.bind();
+	glDepthFunc(GL_ALWAYS);
 	glLineWidth(width_);
 	Gl::drawArrays(GL_LINES, 0, 2);
-	return 1;
+	glDepthFunc(GL_LESS);
 }
 
 void Line::setWidth(GLfloat width)

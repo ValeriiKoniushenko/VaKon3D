@@ -25,6 +25,7 @@
 #include "Delegate.h"
 #include "JsonPrintable.h"
 #include "Lightning.h"
+#include "Line.h"
 #include "Triangle.h"
 #include "TriangleVbo.h"
 #include "Updateable.h"
@@ -101,7 +102,6 @@ public:
 	[[nodiscard]] float getCurrentSpeed() const;
 
 	virtual void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera);
-	virtual void tryDrawOutline(ShaderPack& shaderPack, Camera& camera);
 
 	virtual void setOrigin(const glm::vec3& origin);
 	[[nodiscard]] virtual const glm::vec3& getOrigin() const;
@@ -136,6 +136,8 @@ public:
 protected:
 	void recalculateMatrices();
 	virtual void setVertices(){};
+	virtual void tryDrawCoordinateSystem(ShaderPack& shaderPack, Camera& camera);
+	virtual void tryDrawOutline(ShaderPack& shaderPack, Camera& camera);
 
 	LambdaMulticastDelegate<void()> onRecalculateMatrices;
 
@@ -163,4 +165,10 @@ protected:
 	bool verticesAreDirty_ = true;
 	glm::vec3 outlineSize_ = glm::vec3(.1f);
 	Color4 outlineColor_ = {247, 217, 17, 255};
+	Line lineX_;
+	Line lineY_;
+	Line lineZ_;
+	inline static const float lineWidth_ = 5.f;
+	inline static const float lineSize_ = 150.f;
+	bool isDrawSystemCoord_ = true;
 };
