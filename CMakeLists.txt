@@ -32,6 +32,8 @@ add_subdirectory(lib/core/scene-objects)
 add_subdirectory(lib/core/window)
 add_subdirectory(lib/core/world)
 
+add_subdirectory(lib/editor/VaKon3DEditor)
+
 add_subdirectory(lib/boost)
 add_subdirectory(lib/glad)
 add_subdirectory(lib/glew)
