@@ -20,42 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "Raycast.h"
 
-#include "Color.h"
-#include "NotCopyableButMovable.h"
-#include "Vao.h"
-#include "Vbo.h"
-#include "glm/glm.hpp"
+#include "SceneObject.h"
+#include "SceneObjectCollector.h"
 
-#include <vector>
-
-class ShaderPack;
-class Camera;
-
-class Line : public Utils::NotCopyableButMovable
+SceneObject* RayCast::findIntersects() const
 {
-public:
-	Line();
+	for (auto* el : GetSceneObjectCollector())
+	{
+		if (el)
+		{
+			if (el->isIntersectsWithRayCast(*this))
+			{
+				return el;
+			}
+		}
+	}
 
-	void setStartAndEndPoint(glm::vec3 start, glm::vec3 end);
-
-	void setColor(const Color4& color);
-
-	void draw(ShaderPack& shaderPack, Camera& camera);
-
-	void setWidth(GLfloat width);
-	[[nodiscard]] GLfloat getWidth() const;
-
-	[[nodiscard]] std::pair<glm::vec3, glm::vec3> getLine() const;
-
-	[[nodiscard]] bool isNull() const;
-
-private:
-	GLfloat width_{1.f};
-	Vbo vbo;
-	Vao vao;
-	glm::vec3 startPoint_{};
-	glm::vec3 endPoint_{};
-	Color4 lineColor_;
-};
+	return nullptr;
+}

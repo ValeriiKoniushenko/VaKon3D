@@ -31,7 +31,7 @@ class ModelPack : public Utils::CopyableAndMoveable, public JsonPrintable
 {
 public:
 	inline static const std::vector<std::string> permissibleFileFormats = {".obj"};
-	boost::property_tree::ptree toJson() const override;
+	[[nodiscard]] boost::property_tree::ptree toJson() const override;
 	void loadFromFile(const std::filesystem::path& path);
 
 	[[nodiscard]] SceneObject& getModel(const std::string& name);

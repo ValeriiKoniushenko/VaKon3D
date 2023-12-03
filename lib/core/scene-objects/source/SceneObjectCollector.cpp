@@ -20,79 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Line.h"
+#include "SceneObjectCollector.h"
 
-#include "Camera.h"
-#include "ShaderPack.h"
-
-Line::Line()
+SceneObjectCollector& GetSceneObjectCollector()
 {
-	vao.generate();
-	vbo.generate();
-
-	vao.bind();
-	vbo.bind();
-
-	Gl::Vao::vertexAttribPointer(0, 3, Gl::Type::Float, false, 3 * sizeof(float), nullptr);
+	return SceneObjectCollector::instance();
 }
 
-void Line::setStartAndEndPoint(glm::vec3 start, glm::vec3 end)
+void SceneObjectCollector::add(SceneObject* object)
 {
-	startPoint_ = start;
-	endPoint_ = end;
-
-	std::vector<float> vertices = {
-		start.x,
-		start.y,
-		start.z,
-		end.x,
-		end.y,
-		end.z,
-	};
-
-	vbo.bind();
-	vbo.data(vertices);
+	data_.push_back(object);
 }
 
-void Line::setColor(const Color4& color)
+void SceneObjectCollector::remove(SceneObject* object)
 {
-	lineColor_ = color;
+	data_.erase(std::remove(data_.begin(), data_.end(), object), data_.end());
 }
 
-void Line::draw(ShaderPack& shaderPack, Camera& camera)
+std::vector<SceneObject*>::iterator SceneObjectCollector::begin()
 {
-	if (isNull())
-	{
-		return;
-	}
-
-	auto& shader = shaderPack["line"];
-	shader.use();
-
-	shader.uniform("uLineColor", toGlColor4(lineColor_));
-	shader.uniform("uProjectionView", false, camera.getMatrix());
-
-	vao.bind();
-	glLineWidth(width_);
-	Gl::drawArrays(GL_LINES, 0, 2);
+	return data_.begin();
 }
 
-void Line::setWidth(GLfloat width)
+std::vector<SceneObject*>::const_iterator SceneObjectCollector::begin() const
 {
-	width_ = width;
+	return data_.cbegin();
 }
 
-GLfloat Line::getWidth() const
+std::vector<SceneObject*>::iterator SceneObjectCollector::end()
 {
-	return width_;
+	return data_.end();
 }
 
-std::pair<glm::vec3, glm::vec3> Line::getLine() const
+std::vector<SceneObject*>::const_iterator SceneObjectCollector::end() const
 {
-	return std::make_pair(startPoint_, endPoint_);
-}
-
-bool Line::isNull() const
-{
-	return glm::length(endPoint_ - startPoint_) == 0.f;
+	return data_.cend();
 }

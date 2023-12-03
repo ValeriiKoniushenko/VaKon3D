@@ -22,40 +22,25 @@
 
 #pragma once
 
-#include "Color.h"
-#include "NotCopyableButMovable.h"
-#include "Vao.h"
-#include "Vbo.h"
-#include "glm/glm.hpp"
+#include "Singleton.h"
 
 #include <vector>
 
-class ShaderPack;
-class Camera;
+class SceneObject;
 
-class Line : public Utils::NotCopyableButMovable
+class SceneObjectCollector : public Singleton<SceneObjectCollector>
 {
 public:
-	Line();
+	void add(SceneObject* object);
+	void remove(SceneObject* object);
 
-	void setStartAndEndPoint(glm::vec3 start, glm::vec3 end);
-
-	void setColor(const Color4& color);
-
-	void draw(ShaderPack& shaderPack, Camera& camera);
-
-	void setWidth(GLfloat width);
-	[[nodiscard]] GLfloat getWidth() const;
-
-	[[nodiscard]] std::pair<glm::vec3, glm::vec3> getLine() const;
-
-	[[nodiscard]] bool isNull() const;
+	[[nodiscard]] std::vector<SceneObject*>::iterator begin();
+	[[nodiscard]] std::vector<SceneObject*>::const_iterator begin() const;
+	[[nodiscard]] std::vector<SceneObject*>::iterator end();
+	[[nodiscard]] std::vector<SceneObject*>::const_iterator end() const;
 
 private:
-	GLfloat width_{1.f};
-	Vbo vbo;
-	Vao vao;
-	glm::vec3 startPoint_{};
-	glm::vec3 endPoint_{};
-	Color4 lineColor_;
+	std::vector<SceneObject*> data_;
 };
+
+SceneObjectCollector& GetSceneObjectCollector();

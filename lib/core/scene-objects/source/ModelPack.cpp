@@ -23,6 +23,7 @@
 #include "ModelPack.h"
 
 #include "ObjModelParser.h"
+#include "SceneObjectCollector.h"
 #include "UtilsFunctions.h"
 
 boost::property_tree::ptree ModelPack::toJson() const
@@ -44,6 +45,7 @@ void ModelPack::loadFromFile(const std::filesystem::path& path)
 		sceneObject.loadVertices(el.vertices_);
 		sceneObject.setName(el.name);
 		models_.emplace(el.name, std::move(sceneObject));
+		GetSceneObjectCollector().add(&models_.find(el.name)->second);
 	}
 }
 

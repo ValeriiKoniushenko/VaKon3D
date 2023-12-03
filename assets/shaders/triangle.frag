@@ -55,7 +55,7 @@ void main()
     float specularPow = uSpecularPow;
     if (uIsHasSpecularTexture)
     {
-        specularPow = mix(512.f, 4096.f, texture(uSpecularTexture, ioUv).r);
+        specularPow = mix(128.f, 4096.f, texture(uSpecularTexture, ioUv).r);
     }
     float specularLight = max(pow(dot(normal, halfVector), specularPow) * uSpecularIntensity, 0.f);
 

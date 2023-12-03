@@ -35,6 +35,7 @@
 class ShaderPack;
 class Camera;
 class Texture;
+class RayCast;
 
 class SceneObject : public JsonPrintable, public Updateable
 {
@@ -42,6 +43,11 @@ public:
 	inline static const float minMass = 0.0001f;
 	inline static const float maxMass = 16'000'000.f;
 	inline static const float airResistance = 0.999f;
+
+	SceneObject();
+	SceneObject(SceneObject&& other) = default;
+	SceneObject& operator=(SceneObject&& other) = default;
+	~SceneObject() override;
 
 	/** brief: working in global coordinates */
 	virtual void setPosition(const glm::vec3& position);
@@ -136,7 +142,9 @@ public:
 
 	void setTextureRect(glm::vec2 rect);
 
-	boost::property_tree::ptree toJson() const override;
+	[[nodiscard]] boost::property_tree::ptree toJson() const override;
+
+	[[nodiscard]] std::optional<glm::vec3> isIntersectsWithRayCast(const RayCast& ray) const;
 
 protected:
 	void recalculateMatrices();

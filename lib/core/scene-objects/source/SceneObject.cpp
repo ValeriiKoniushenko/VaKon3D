@@ -24,6 +24,8 @@
 
 #include "Camera.h"
 #include "Image.h"
+#include "Raycast.h"
+#include "SceneObjectCollector.h"
 #include "ShaderPack.h"
 #include "Texture.h"
 #include "WorldVariables.h"
@@ -31,6 +33,16 @@
 #include "glm/gtx/transform.hpp"
 
 #include <algorithm>
+
+SceneObject::SceneObject()
+{
+	GetSceneObjectCollector().add(this);
+}
+
+SceneObject::~SceneObject()
+{
+	GetSceneObjectCollector().remove(this);
+}
 
 void SceneObject::setPosition(const glm::vec3& position)
 {
@@ -682,9 +694,11 @@ void SceneObject::tryDrawCoordinateSystem(ShaderPack& shaderPack, Camera& camera
 	lineZ = glm::mat3(lineZModel) * lineZ;
 	lineZ_.setStartAndEndPoint(position_, position_ + lineZ);
 
+	glDepthFunc(GL_ALWAYS);
 	lineX_.draw(shaderPack, camera);
 	lineY_.draw(shaderPack, camera);
 	lineZ_.draw(shaderPack, camera);
+	glDepthFunc(GL_LESS);
 }
 
 void SceneObject::toggleOutline()
@@ -705,4 +719,40 @@ void SceneObject::setDrawCoordinateSystem(bool isDraw)
 void SceneObject::toggleDrawCoordinateSystem()
 {
 	isDrawSystemCoord_ = !isDrawSystemCoord_;
+}
+
+std::optional<glm::vec3> SceneObject::isIntersectsWithRayCast(const RayCast& ray) const
+{
+	auto signedTetraVolume = [](glm::vec3 a, glm::vec3 b, glm::vec3 c, glm::vec3 d)
+	{ return glm::sign(glm::dot(glm::cross(b - a, c - a), d - a) / 6.0); };
+
+	glm::vec3 points[3]{};
+	int i = 0;
+	for (auto& unit : triangles_)
+	{
+		points[i++] = cachedModelMatrix_ * glm::vec4(unit.position, 1.f);
+		if (i == 3)
+		{
+			i = 0;
+
+			auto s1 = signedTetraVolume(ray.getLine().first, points[0], points[1], points[2]);
+			auto s2 = signedTetraVolume(ray.getLine().second, points[0], points[1], points[2]);
+
+			if (s1 != s2)
+			{
+				auto s3 = signedTetraVolume(ray.getLine().first, ray.getLine().second, points[0], points[1]);
+				auto s4 = signedTetraVolume(ray.getLine().first, ray.getLine().second, points[1], points[2]);
+				auto s5 = signedTetraVolume(ray.getLine().first, ray.getLine().second, points[2], points[0]);
+				if (s3 == s4 && s4 == s5)
+				{
+					auto n = glm::cross(points[1] - points[0], points[2] - points[0]);
+					auto t = -glm::dot(ray.getLine().first, n - points[0]) /
+							 glm::dot(ray.getLine().first, ray.getLine().second - ray.getLine().first);
+					return std::make_optional(ray.getLine().first + t * (ray.getLine().second - ray.getLine().first));
+				}
+			}
+		}
+	}
+
+	return {};
 }
