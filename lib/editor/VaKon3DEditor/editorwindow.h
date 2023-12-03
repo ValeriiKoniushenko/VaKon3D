@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ServerSocket.h"
+
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 
@@ -21,6 +23,12 @@ public:
 		Tabs() = delete;
 
 		inline static const char* title = "Tabs";
+
+		struct General
+		{
+			General() = delete;
+			inline static const char* title = "General";
+		};
 
 		struct GameProcess
 		{
@@ -64,11 +72,19 @@ public:
 	EditorWindow(QWidget* parent = nullptr);
 	~EditorWindow();
 
+protected:
+	void paintEvent(QPaintEvent* event) override;
+
 private:
 	void fillUpTabTree();
+	void onConnectToServer(bool checked);
+
 	// slots
 	void onTabClicked(QTreeWidgetItem* item, int column);
 
 private:
 	Ui::EditorWindow* ui;
+	TCPServerSocket serverSocket;
+	TCPClientSocket clientSocket;
+	bool isConnected = false;
 };

@@ -29,8 +29,10 @@ add_subdirectory(lib/core/input-devices)
 add_subdirectory(lib/core/logger)
 add_subdirectory(lib/core/model-parser)
 add_subdirectory(lib/core/scene-objects)
+add_subdirectory(lib/core/socket)
 add_subdirectory(lib/core/window)
 add_subdirectory(lib/core/world)
+add_subdirectory(lib/core/wsa)
 
 add_subdirectory(lib/editor/VaKon3DEditor)
 

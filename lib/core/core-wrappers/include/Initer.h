@@ -32,6 +32,7 @@
 #include "Window.h"
 #include "World.h"
 #include "WorldVariables.h"
+#include "Wsa.h"
 
 #include <glm/glm.hpp>
 
@@ -49,6 +50,7 @@ public:
 
 	static inline void init(const Data& data)
 	{
+		Wsa::instance().initialize(1, 1);
 		Logger::initLogger();
 		GlfwWrapper::initGlfw(data.glfwVersion.x, data.glfwVersion.y);
 		GetWindow().create({data.windowSize.width, data.windowSize.height}, data.title);
