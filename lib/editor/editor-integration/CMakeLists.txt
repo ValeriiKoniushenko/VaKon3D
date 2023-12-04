@@ -14,4 +14,5 @@ target_link_libraries(Editor-Integration PUBLIC
 	Core-Wrappers
 	Boost
 	Socket
+	Console
 )

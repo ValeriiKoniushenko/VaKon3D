@@ -64,7 +64,7 @@ void EditorIntegration::connectToEditor()
 					auto actions = request.get<std::string>(EditorNetworkProtocol::Body::possibleActionsPropertyName);
 					if (actions == "console")
 					{
-						std::cout << request.get<std::string>(EditorNetworkProtocol::Body::contentPropertyName) << std::endl;
+						console.runCommand(request.get<std::string>(EditorNetworkProtocol::Body::contentPropertyName));
 					}
 				}
 			}

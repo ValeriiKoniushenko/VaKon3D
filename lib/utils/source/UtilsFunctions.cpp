@@ -103,6 +103,29 @@ std::vector<ISize2D> getAllSupportedWndSizes()
 	return data;
 }
 
+std::vector<std::string> split(const std::string& string, char devider)
+{
+	std::vector<std::string> out;
+
+	out.push_back({});
+
+	for (auto ch : string)
+	{
+		if (ch != devider)
+		{
+			out.back() += ch;
+		}
+		else if (ch == devider)
+		{
+			out.push_back({});
+		}
+	}
+
+	out.erase(std::remove_if(out.begin(), out.end(), [](const std::string& s) { return s.empty(); }), out.end());
+
+	return out;
+}
+
 std::ifstream readFile(const std::filesystem::path& path)
 {
 	std::ifstream file(path);

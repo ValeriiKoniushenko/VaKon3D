@@ -129,6 +129,7 @@ void EditorWindow::onEnterDataToConsole()
 {
 	if (!isConnected)
 	{
+		ui->plainTextEditConsole->appendPlainText("The connection wasn't established");
 		return;
 	}
 	EditorNetworkProtocol::Body body;

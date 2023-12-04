@@ -20,26 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Size.h"
-#include "boost/property_tree/json_parser.hpp"
-#include "boost/property_tree/ptree.hpp"
+#pragma once
 
-#include <filesystem>
+#include "Singleton.h"
+
 #include <string>
-#include <vector>
 
-namespace Utils
+class Console : public Singleton<Console>
 {
+public:
+	void runCommand(const std::string& command);
 
-[[nodiscard]] std::string jsonToString(const boost::property_tree::ptree& ptree);
-[[nodiscard]] std::string getFileContent(const std::filesystem::path& path);
-void setFileContent(const std::filesystem::path& path, const std::string& data);
-void setFileContent(const std::filesystem::path& path, void* p, size_t size);
-[[nodiscard]] std::vector<ISize2D> getAllSupportedWndSizes();
-[[nodiscard]] std::vector<std::string> split(const std::string& string, char devider);
-[[nodiscard]] std::ifstream readFile(const std::filesystem::path& path);
-[[nodiscard]] bool isEqual(float n1, float n2, float E = std::numeric_limits<float>::epsilon());
-[[nodiscard]] bool isZero(float n, float E = std::numeric_limits<float>::epsilon());
-[[nodiscard]] std::string toString(const std::vector<std::string>& data, const std::string& delimiter = ", ");
-
-}	 // namespace Utils
+private:
+};

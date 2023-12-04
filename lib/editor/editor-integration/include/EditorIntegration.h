@@ -23,6 +23,7 @@
 #pragma once
 
 #include "ClientSocket.h"
+#include "Console.h"
 #include "NotCopyableButMovable.h"
 #include "boost/property_tree/json_parser.hpp"
 
@@ -81,6 +82,8 @@ public:
 	~EditorIntegration() override;
 
 	void connectToEditor();
+
+	Console console;
 
 private:
 	boost::property_tree::ptree getEditorRequest();

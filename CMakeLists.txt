@@ -22,6 +22,7 @@ add_subdirectory(dependencies/googletest)
 
 add_subdirectory(lib/core/app)
 add_subdirectory(lib/core/camera)
+add_subdirectory(lib/core/console)
 add_subdirectory(lib/core/core-wrappers)
 add_subdirectory(lib/core/delegate)
 add_subdirectory(lib/core/freetype-wrapper)
