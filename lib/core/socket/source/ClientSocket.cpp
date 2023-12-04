@@ -32,6 +32,8 @@ TCPClientSocket::TCPClientSocket(TCPClientSocket&& other) noexcept
 
 TCPClientSocket& TCPClientSocket::operator=(TCPClientSocket&& other) noexcept
 {
+	Socket::operator=(std::move(other));
+
 	connectedAddress = other.connectedAddress;
 	isConnected_ = other.isConnected_;
 

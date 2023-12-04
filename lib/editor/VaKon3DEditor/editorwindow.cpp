@@ -108,6 +108,7 @@ void EditorWindow::onConnectToServer(bool checked)
 		serverSocket.bind(SocketAddress(ui->lineEditIp->text().toStdString(), ui->lineEditPort->text().toInt()));
 		serverSocket.listen();
 		clientSocket = serverSocket.accept();
+
 		ui->pushButtonConnect->setText("Disconnect");
 		isConnected = true;
 	}

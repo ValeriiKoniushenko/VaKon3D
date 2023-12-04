@@ -48,7 +48,6 @@ void Socket::open(AddressFamily addressFamily, Socket::Type type, Socket::Protoc
 
 Socket& Socket::operator=(Socket&& other) noexcept
 {
-	close();
 	socketDescriptor = other.socketDescriptor;
 	addressFamily = other.addressFamily;
 	type = other.type;

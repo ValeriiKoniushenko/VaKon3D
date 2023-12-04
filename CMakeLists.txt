@@ -20,6 +20,7 @@ add_subdirectory(dependencies/glfw-3.3.7)
 add_subdirectory(dependencies/googlebenchmark)
 add_subdirectory(dependencies/googletest)
 
+add_subdirectory(lib/core/app)
 add_subdirectory(lib/core/camera)
 add_subdirectory(lib/core/core-wrappers)
 add_subdirectory(lib/core/delegate)
@@ -35,6 +36,7 @@ add_subdirectory(lib/core/world)
 add_subdirectory(lib/core/wsa)
 
 add_subdirectory(lib/editor/VaKon3DEditor)
+add_subdirectory(lib/editor/editor-integration)
 
 add_subdirectory(lib/boost)
 add_subdirectory(lib/glad)
