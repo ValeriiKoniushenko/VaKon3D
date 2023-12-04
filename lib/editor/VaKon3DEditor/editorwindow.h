@@ -81,10 +81,11 @@ private:
 
 	// slots
 	void onTabClicked(QTreeWidgetItem* item, int column);
+	void onEnterDataToConsole();
 
 private:
 	Ui::EditorWindow* ui;
 	TCPServerSocket serverSocket;
-	TCPClientSocket clientSocket;
+	TCPClientSocket acceptedClient;
 	bool isConnected = false;
 };

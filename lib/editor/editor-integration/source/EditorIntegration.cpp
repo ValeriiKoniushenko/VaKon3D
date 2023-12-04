@@ -22,6 +22,7 @@
 
 #include "EditorIntegration.h"
 
+#include <iostream>
 #include <stdexcept>
 
 EditorIntegration::EditorIntegration()
@@ -50,7 +51,42 @@ void EditorIntegration::connectToEditor()
 					// do nothing
 				}
 			}
+			if (!clientSocket.isConnected())
+			{
+				return;
+			}
+
+			try
+			{
+				while (!token.stop_requested())
+				{
+					auto request = getEditorRequest();
+					auto actions = request.get<std::string>(EditorNetworkProtocol::Body::possibleActionsPropertyName);
+					if (actions == "console")
+					{
+						std::cout << request.get<std::string>(EditorNetworkProtocol::Body::contentPropertyName) << std::endl;
+					}
+				}
+			}
+			catch (...)
+			{
+				// do nothing
+			}
 		});
 
 	mainNetworkThread = std::move(tmp);
+}
+
+boost::property_tree::ptree EditorIntegration::getEditorRequest()
+{
+	boost::property_tree::ptree jsonHeader;
+	auto header = std::stringstream(clientSocket.receiveAsString(EditorNetworkProtocol::Header::length));
+	boost::property_tree::read_json(header, jsonHeader);
+
+	const auto bodyLength = jsonHeader.get<std::size_t>(EditorNetworkProtocol::Header::lengthPropertyName);
+	auto body = std::stringstream(clientSocket.receiveAsString(bodyLength + 1ull));
+	boost::property_tree::ptree jsonBody;
+	boost::property_tree::read_json(body, jsonBody);
+
+	return jsonBody;
 }
