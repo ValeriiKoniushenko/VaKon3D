@@ -22,31 +22,15 @@
 
 #pragma once
 
-#include "SceneObject.h"
+#include "Commands.h"
+#include "Singleton.h"
 
-#include <filesystem>
-#include <unordered_map>
-
-class ModelPack : public Utils::CopyableAndMoveable, public JsonPrintable
+class CommandFactory
 {
 public:
-	inline static const std::vector<std::string> permissibleFileFormats = {".obj"};
-	[[nodiscard]] nlohmann::json toJson() const override;
-	void loadFromFile(const std::filesystem::path& path);
+	CommandFactory() = delete;
 
-	[[nodiscard]] SceneObject& getModel(const std::string& name);
-	[[nodiscard]] const SceneObject& getModel(const std::string& name) const;
-	[[nodiscard]] SceneObject& operator[](const std::string& name);
-	[[nodiscard]] const SceneObject& operator[](const std::string& name) const;
-	[[nodiscard]] std::unordered_map<std::string, SceneObject>::iterator begin();
-	[[nodiscard]] std::unordered_map<std::string, SceneObject>::const_iterator begin() const;
-	[[nodiscard]] std::unordered_map<std::string, SceneObject>::iterator end();
-	[[nodiscard]] std::unordered_map<std::string, SceneObject>::const_iterator end() const;
+	static std::shared_ptr<BaseCommand> generateCommand(const std::string& command);
 
 private:
-	[[nodiscard]] bool validateFileFormat(const std::filesystem::path& path) const;
-	void requireValidFilePath(const std::filesystem::path& path) const;
-
-protected:
-	std::unordered_map<std::string, SceneObject> models_;
 };

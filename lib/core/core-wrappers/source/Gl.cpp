@@ -1034,14 +1034,14 @@ void Gl::Program::uniformMatrix4x3fv(GLint location, GLsizei count, GLboolean tr
 #endif
 }
 
-boost::property_tree::ptree Gl::State::toJson() const
+nlohmann::json Gl::State::toJson() const
 {
-	boost::property_tree::ptree ptree;
-	ptree.put("bound-vao", boundVao);
-	ptree.put("bound-vbo", boundVbo);
-	ptree.put("bound-texture", boundTexture);
-	ptree.put("bound-shader", boundShader);
-	ptree.put("bound-program", boundProgram);
+	nlohmann::json json;
+	json["bound-vao"] = boundVao;
+	json["bound-vbo"] = boundVbo;
+	json["bound-texture"] = boundTexture;
+	json["bound-shader"] = boundShader;
+	json["bound-program"] = boundProgram;
 
-	return ptree;
+	return json;
 }

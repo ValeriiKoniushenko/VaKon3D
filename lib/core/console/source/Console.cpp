@@ -22,15 +22,34 @@
 
 #include "Console.h"
 
+#include "CommandFactory.h"
 #include "UtilsFunctions.h"
 
 #include <vector>
 
-void Console::runCommand(const std::string& command)
+std::string Console::runCommand(const std::string& command)
 {
-	std::vector<std::string> strings = Utils::split(command, ' ');
-	if (strings.empty())
+	std::vector<std::string> args = Utils::split(command, ' ');
+	if (args.empty())
 	{
-		return;
+		return "Enter a command";
 	}
+	std::string commandName = args.front();
+	args.erase(args.begin());
+
+	try
+	{
+		auto cmd = CommandFactory::generateCommand(commandName);
+		if (!cmd)
+		{
+			return "Enter a valid command";
+		}
+		cmd->run(args);
+		return cmd->getResponse();
+	}
+	catch (const std::runtime_error& er)
+	{
+		return std::string("Error: ") + er.what();
+	}
+	return "None";
 }

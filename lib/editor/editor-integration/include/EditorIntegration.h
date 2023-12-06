@@ -25,7 +25,7 @@
 #include "ClientSocket.h"
 #include "Console.h"
 #include "NotCopyableButMovable.h"
-#include "boost/property_tree/json_parser.hpp"
+#include "json.hpp"
 
 #include <thread>
 
@@ -41,13 +41,13 @@ struct EditorNetworkProtocol
 
 		static std::string generate(std::size_t bodyLength)
 		{
-			boost::property_tree::ptree json;
-			json.put(Header::lengthPropertyName, bodyLength);
-			json.put(Header::typePropertyName, Header::possibleTypes.front());
+			nlohmann::json json;
+			json[Header::lengthPropertyName] = bodyLength;
+			json[Header::typePropertyName] = Header::possibleTypes.front();
 
-			std::ostringstream oss;
-			boost::property_tree::write_json(oss, json);
-			return oss.str();
+			std::string out = json.dump();
+			out.resize(Header::length);
+			return out;
 		}
 	};
 
@@ -64,13 +64,11 @@ struct EditorNetworkProtocol
 
 		static std::string generate(const Body& body)
 		{
-			boost::property_tree::ptree json;
-			json.put(Body::possibleActionsPropertyName, body.action);
-			json.put(Body::contentPropertyName, body.content);
+			nlohmann::json json;
+			json[Body::possibleActionsPropertyName] = body.action;
+			json[Body::contentPropertyName] = body.content;
 
-			std::ostringstream oss;
-			boost::property_tree::write_json(oss, json);
-			return oss.str();
+			return json.dump();
 		}
 	};
 };
@@ -86,7 +84,8 @@ public:
 	Console console;
 
 private:
-	boost::property_tree::ptree getEditorRequest();
+	nlohmann::json getEditorRequest();
+	void giveResponseToTheConsole(const std::string& response);
 
 private:
 	TCPClientSocket clientSocket;

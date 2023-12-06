@@ -125,7 +125,14 @@ void TCPClientSocket::open(AddressFamily addressFamily, Protocol protocol)
 std::string TCPClientSocket::receiveAsString(std::size_t receiveSize)
 {
 	std::string string;
-	receiveTo(receiveSize, [&string](const char* data, std::size_t size) { string += data; });
+	receiveTo(receiveSize,
+		[&string](const char* data, std::size_t size)
+		{
+			for (std::size_t i = 0; i < size; ++i)
+			{
+				string += data[i];
+			}
+		});
 	return string;
 }
 

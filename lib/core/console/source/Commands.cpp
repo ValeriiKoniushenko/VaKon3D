@@ -20,16 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "Commands.h"
 
-#include "Singleton.h"
+#include <iostream>
 
-#include <string>
-
-class Console : public Singleton<Console>
+void CommandOutlineForAll::run(const std::vector<std::string>& args)
 {
-public:
-	std::string runCommand(const std::string& command);
+	response_ = "Successful command executing";
+}
 
-private:
-};
+void CommandPrint::run(const std::vector<std::string>& args)
+{
+	for (auto& el : args)
+	{
+		std::cout << el << " ";
+	}
+	std::cout << std::endl;
+	response_ = "Successful command executing";
+}
+
+void CommandGetObject::run(const std::vector<std::string>& args)
+{
+	response_ = "Successful command executing";
+}

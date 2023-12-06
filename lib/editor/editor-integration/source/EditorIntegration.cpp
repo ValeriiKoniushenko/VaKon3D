@@ -22,6 +22,8 @@
 
 #include "EditorIntegration.h"
 
+#include <Windows.h>
+
 #include <iostream>
 #include <stdexcept>
 
@@ -61,32 +63,43 @@ void EditorIntegration::connectToEditor()
 				while (!token.stop_requested())
 				{
 					auto request = getEditorRequest();
-					auto actions = request.get<std::string>(EditorNetworkProtocol::Body::possibleActionsPropertyName);
+					auto actions = request[EditorNetworkProtocol::Body::possibleActionsPropertyName];
 					if (actions == "console")
 					{
-						console.runCommand(request.get<std::string>(EditorNetworkProtocol::Body::contentPropertyName));
+						const auto response = console.runCommand(request[EditorNetworkProtocol::Body::contentPropertyName]);
+						giveResponseToTheConsole(response);
 					}
 				}
 			}
 			catch (...)
 			{
-				// do nothing
+				MessageBoxA(nullptr, "Was got an exception", "Editor-Connection error", MB_OK);
 			}
 		});
 
 	mainNetworkThread = std::move(tmp);
 }
 
-boost::property_tree::ptree EditorIntegration::getEditorRequest()
+nlohmann::json EditorIntegration::getEditorRequest()
 {
-	boost::property_tree::ptree jsonHeader;
-	auto header = std::stringstream(clientSocket.receiveAsString(EditorNetworkProtocol::Header::length));
-	boost::property_tree::read_json(header, jsonHeader);
+	auto json = nlohmann::json::parse(clientSocket.receiveAsString(EditorNetworkProtocol::Header::length));
 
-	const auto bodyLength = jsonHeader.get<std::size_t>(EditorNetworkProtocol::Header::lengthPropertyName);
-	auto body = std::stringstream(clientSocket.receiveAsString(bodyLength + 1ull));
-	boost::property_tree::ptree jsonBody;
-	boost::property_tree::read_json(body, jsonBody);
+	const std::size_t bodyLength = json[EditorNetworkProtocol::Header::lengthPropertyName];
+	auto tmp = clientSocket.receiveAsString(bodyLength + 1ull);
+	return nlohmann::json::parse(tmp);
+}
 
-	return jsonBody;
+void EditorIntegration::giveResponseToTheConsole(const std::string& response)
+{
+	EditorNetworkProtocol::Body body;
+	body.action = "response-to-console";
+	body.content = response;
+	auto bodyString = EditorNetworkProtocol::Body::generate(body);
+	auto headerString = EditorNetworkProtocol::Header::generate(bodyString.length());
+
+	std::vector<char> headerData(headerString.begin(), headerString.end());
+	headerData.resize(EditorNetworkProtocol::Header::length);
+
+	clientSocket.send(headerData);
+	clientSocket.send(bodyString);
 }

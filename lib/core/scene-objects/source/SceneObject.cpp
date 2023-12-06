@@ -639,9 +639,9 @@ void SceneObject::loadVertices(std::vector<TriangleVbo::Unit>& itWillBeMoved)
 	triangles_ = std::move(itWillBeMoved);
 }
 
-boost::property_tree::ptree SceneObject::toJson() const
+nlohmann::json SceneObject::toJson() const
 {
-	return boost::property_tree::ptree();
+	return {};
 }
 
 void SceneObject::setTextureRect(glm::vec2 rect)

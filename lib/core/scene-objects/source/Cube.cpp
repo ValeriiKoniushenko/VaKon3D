@@ -25,9 +25,9 @@
 #include "Image.h"
 #include "Texture.h"
 
-boost::property_tree::ptree Cube::toJson() const
+nlohmann::json Cube::toJson() const
 {
-	return boost::property_tree::ptree();
+	return {};
 }
 
 void Cube::setSize(float size)

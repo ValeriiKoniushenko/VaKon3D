@@ -119,12 +119,9 @@ glm::vec2 Camera::getSensitive() const
 	return sensitive_;
 }
 
-boost::property_tree::ptree Camera::toJson() const
+nlohmann::json Camera::toJson() const
 {
-	boost::property_tree::ptree tree;
-	tree.put("", 1);
-
-	return tree;
+	return {};
 }
 
 glm::vec3 Camera::getPosition() const

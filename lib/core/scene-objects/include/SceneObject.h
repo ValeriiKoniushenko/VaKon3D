@@ -142,7 +142,7 @@ public:
 
 	void setTextureRect(glm::vec2 rect);
 
-	[[nodiscard]] boost::property_tree::ptree toJson() const override;
+	[[nodiscard]] nlohmann::json toJson() const override;
 
 	[[nodiscard]] std::optional<glm::vec3> isIntersectsWithRayCast(const RayCast& ray) const;
 

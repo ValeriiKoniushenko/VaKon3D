@@ -27,7 +27,7 @@
 class Cube : public SceneObject
 {
 public:
-	[[nodiscard]] boost::property_tree::ptree toJson() const override;
+	[[nodiscard]] nlohmann::json toJson() const override;
 
 	void setSize(float size);
 	[[nodiscard]] float getSize() const;

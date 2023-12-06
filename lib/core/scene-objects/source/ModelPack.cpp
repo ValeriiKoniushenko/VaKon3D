@@ -26,9 +26,9 @@
 #include "SceneObjectCollector.h"
 #include "UtilsFunctions.h"
 
-boost::property_tree::ptree ModelPack::toJson() const
+nlohmann::json ModelPack::toJson() const
 {
-	return boost::property_tree::ptree();
+	return {};
 }
 
 void ModelPack::loadFromFile(const std::filesystem::path& path)

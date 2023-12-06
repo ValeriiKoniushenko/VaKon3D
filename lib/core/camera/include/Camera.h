@@ -50,7 +50,7 @@ public:
 	void setSensitive(glm::vec2 value);
 	[[nodiscard]] glm::vec2 getSensitive() const;
 
-	[[nodiscard]] boost::property_tree::ptree toJson() const override;
+	[[nodiscard]] nlohmann::json toJson() const override;
 
 protected:
 	void setVertices() override

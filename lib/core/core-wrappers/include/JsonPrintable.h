@@ -23,11 +23,11 @@
 #pragma once
 
 #include "CopyableAndMoveable.h"
-#include "boost/property_tree/json_parser.hpp"
 #include "boost/property_tree/ptree.hpp"
+#include "json.hpp"
 
 class JsonPrintable : public Utils::CopyableAndMoveable
 {
 public:
-	[[nodiscard]] virtual boost::property_tree::ptree toJson() const = 0;
+	[[nodiscard]] virtual nlohmann::json toJson() const = 0;
 };

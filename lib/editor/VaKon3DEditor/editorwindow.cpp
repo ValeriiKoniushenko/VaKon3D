@@ -132,15 +132,33 @@ void EditorWindow::onEnterDataToConsole()
 		ui->plainTextEditConsole->appendPlainText("The connection wasn't established");
 		return;
 	}
-	EditorNetworkProtocol::Body body;
-	body.content = ui->lineEditConsole->text().toStdString();
-	body.action = "console";
-	const auto bodyString = EditorNetworkProtocol::Body::generate(body);
+	{
+		EditorNetworkProtocol::Body body;
+		body.content = ui->lineEditConsole->text().toStdString();
+		body.action = "console";
+		const auto bodyString = EditorNetworkProtocol::Body::generate(body);
+		const auto headerString = EditorNetworkProtocol::Header::generate(bodyString.size());
 
-	const auto headerString = EditorNetworkProtocol::Header::generate(bodyString.size());
-	acceptedClient.send(headerString);
-	acceptedClient.send(bodyString);
+		std::vector<char> headerData(headerString.begin(), headerString.end());
+		headerData.resize(EditorNetworkProtocol::Header::length);
+
+		acceptedClient.send(headerData);
+		acceptedClient.send(bodyString);
+	}
 
 	ui->plainTextEditConsole->appendPlainText(ui->lineEditConsole->text());
 	ui->lineEditConsole->clear();
+
+	{
+		auto header = nlohmann::json::parse(acceptedClient.receiveAsString(EditorNetworkProtocol::Header::length));
+
+		const std::size_t bodyLength = header[EditorNetworkProtocol::Header::lengthPropertyName];
+		auto body = nlohmann::json::parse(acceptedClient.receiveAsString(bodyLength + 1ull));
+
+		if (body[EditorNetworkProtocol::Body::possibleActionsPropertyName] == "response-to-console")
+		{
+			ui->plainTextEditConsole->appendPlainText(
+				QString(body[EditorNetworkProtocol::Body::contentPropertyName].get<std::string*>()->c_str()));
+		}
+	}
 }

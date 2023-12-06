@@ -250,7 +250,7 @@ public:
 		GLuint boundShader = Shader::invalidId;
 		GLuint boundProgram = Program::invalidId;
 
-		boost::property_tree::ptree toJson() const override;
+		nlohmann::json toJson() const override;
 	};
 
 	static State getState();

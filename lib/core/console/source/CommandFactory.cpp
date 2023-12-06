@@ -20,16 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "CommandFactory.h"
 
-#include "Singleton.h"
-
-#include <string>
-
-class Console : public Singleton<Console>
+std::shared_ptr<BaseCommand> CommandFactory::generateCommand(const std::string& command)
 {
-public:
-	std::string runCommand(const std::string& command);
-
-private:
-};
+	if (command == "outline-for-all")
+	{
+		return std::make_shared<CommandOutlineForAll>();
+	}
+	if (command == "print")
+	{
+		return std::make_shared<CommandPrint>();
+	}
+	if (command == "get-object")
+	{
+		return std::make_shared<CommandGetObject>();
+	}
+	throw std::runtime_error("Such command not found.");
+}
