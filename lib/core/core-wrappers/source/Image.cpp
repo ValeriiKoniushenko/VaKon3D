@@ -210,3 +210,16 @@ std::string Image::channelToString(Image::Channel channel)
 
 	return "none";
 }
+
+nlohmann::json Image::toJson() const
+{
+	nlohmann::json json;
+
+	json["channel"] = channelToString(channel_);
+	json["height"] = height_;
+	json["internalChannel"] = Gl::Texture::channelToString(internalChannel_);
+	json["name"] = name_;
+	json["width"] = width_;
+
+	return json;
+}

@@ -31,7 +31,7 @@
 
 class Image;
 
-class Texture : public Utils::NotCopyableButMovable
+class Texture : public Utils::NotCopyableButMovable, public JsonPrintable
 {
 public:
 	explicit Texture(
@@ -66,6 +66,8 @@ public:
 	[[nodiscard]] Gl::Texture::MinFilter getMinFilter() const;
 
 	[[nodiscard]] std::string getName() const;
+
+	[[nodiscard]] nlohmann::json toJson() const override;
 
 private:
 	void generate();

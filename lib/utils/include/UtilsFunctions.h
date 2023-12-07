@@ -38,6 +38,7 @@ void setFileContent(const std::filesystem::path& path, void* p, size_t size);
 [[nodiscard]] std::ifstream readFile(const std::filesystem::path& path);
 [[nodiscard]] bool isEqual(float n1, float n2, float E = std::numeric_limits<float>::epsilon());
 [[nodiscard]] bool isZero(float n, float E = std::numeric_limits<float>::epsilon());
+[[nodiscard]] bool isNumber(const std::string& string);
 [[nodiscard]] std::string toString(const std::vector<std::string>& data, const std::string& delimiter = ", ");
 
 }	 // namespace Utils

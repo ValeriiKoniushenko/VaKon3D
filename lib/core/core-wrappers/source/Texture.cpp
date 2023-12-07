@@ -196,3 +196,21 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
 	return *this;
 }
+
+nlohmann::json Texture::toJson() const
+{
+	nlohmann::json json;
+
+	json["id"] = id_;
+	if (image_)
+	{
+		json["image"] = image_->toJson();
+	}
+	json["ignoreMipMap"] = ignoreMipMap_;
+	json["isDestroyAtEnd"] = isDestroyAtEnd_;
+	json["magFilter"] = Gl::Texture::magFilterToString(magFilter_);
+	json["minFilter"] = Gl::Texture::minFilterToString(minFilter_);
+	json["target"] = target_;
+
+	return json;
+}

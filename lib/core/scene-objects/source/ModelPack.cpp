@@ -28,7 +28,12 @@
 
 nlohmann::json ModelPack::toJson() const
 {
-	return {};
+	nlohmann::json json;
+	for (const auto& object : models_)
+	{
+		json["models"].push_back(object.second.toJson());
+	}
+	return json;
 }
 
 void ModelPack::loadFromFile(const std::filesystem::path& path)

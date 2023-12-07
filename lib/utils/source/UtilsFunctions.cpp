@@ -139,6 +139,22 @@ bool isZero(float n1, float E)
 	return fabs(n1) < E;
 }
 
+bool isNumber(const std::string& string)
+{
+	for (auto ch : string)
+	{
+		if (isdigit(ch) || ch == '.' || ch == ',')
+		{
+			continue;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 std::string toString(const std::vector<std::string>& data, const std::string& delimiter)
 {
 	std::string out;

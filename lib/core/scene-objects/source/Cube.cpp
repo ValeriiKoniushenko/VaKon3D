@@ -27,7 +27,9 @@
 
 nlohmann::json Cube::toJson() const
 {
-	return {};
+	auto json = SceneObject::toJson();
+	json["size"] = size_;
+	return json;
 }
 
 void Cube::setSize(float size)

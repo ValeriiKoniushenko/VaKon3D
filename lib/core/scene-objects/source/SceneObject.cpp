@@ -77,13 +77,13 @@ void SceneObject::setRotation(const glm::vec3& rotation)
 {
 	rotation_ = rotation;
 	matricesAreDirty_ = true;
-	if (rotation_.x > maxPitch)
+	if (rotation_.x > maxPitch_)
 	{
-		rotation_.x = maxPitch;
+		rotation_.x = maxPitch_;
 	}
-	if (rotation_.x < -maxPitch)
+	if (rotation_.x < -maxPitch_)
 	{
-		rotation_.x = -maxPitch;
+		rotation_.x = -maxPitch_;
 	}
 
 	while (rotation_.y >= 360.f)
@@ -106,13 +106,13 @@ void SceneObject::rotate(const glm::vec3& value)
 	rotation_.x += value.y;
 	rotation_.z += value.z;
 
-	if (rotation_.x > maxPitch)
+	if (rotation_.x > maxPitch_)
 	{
-		rotation_.x = maxPitch;
+		rotation_.x = maxPitch_;
 	}
-	if (rotation_.x < -maxPitch)
+	if (rotation_.x < -maxPitch_)
 	{
-		rotation_.x = -maxPitch;
+		rotation_.x = -maxPitch_;
 	}
 
 	while (rotation_.y >= 360.f)
@@ -145,13 +145,13 @@ void SceneObject::setRotationX(float x)
 {
 	rotation_.x = x;
 	matricesAreDirty_ = true;
-	if (rotation_.x > maxPitch)
+	if (rotation_.x > maxPitch_)
 	{
-		rotation_.x = maxPitch;
+		rotation_.x = maxPitch_;
 	}
-	if (rotation_.x < -maxPitch)
+	if (rotation_.x < -maxPitch_)
 	{
-		rotation_.x = -maxPitch;
+		rotation_.x = -maxPitch_;
 	}
 }
 
@@ -239,12 +239,12 @@ glm::vec3 SceneObject::getScale() const
 
 void SceneObject::setMaxPitch(float value)
 {
-	maxPitch = value;
+	maxPitch_ = value;
 }
 
 float SceneObject::getMaxPitch() const
 {
-	return maxPitch;
+	return maxPitch_;
 }
 
 glm::vec3 SceneObject::getForwardVector() const
@@ -641,7 +641,41 @@ void SceneObject::loadVertices(std::vector<TriangleVbo::Unit>& itWillBeMoved)
 
 nlohmann::json SceneObject::toJson() const
 {
-	return {};
+	nlohmann::json json;
+	json["cachedModelMatrix"] = {
+		{cachedModelMatrix_[0].x, cachedModelMatrix_[0].y, cachedModelMatrix_[0].z, cachedModelMatrix_[0].w},
+		{cachedModelMatrix_[1].x, cachedModelMatrix_[1].y, cachedModelMatrix_[1].z, cachedModelMatrix_[1].w},
+		{cachedModelMatrix_[2].x, cachedModelMatrix_[2].y, cachedModelMatrix_[2].z, cachedModelMatrix_[2].w},
+		{cachedModelMatrix_[3].x, cachedModelMatrix_[3].y, cachedModelMatrix_[3].z, cachedModelMatrix_[3].w}};
+	if (diffuseTexture_)
+	{
+		json["diffuseTexture"] = diffuseTexture_->toJson();
+	}
+	json["impulse"] = {impulse_.x, impulse_.y, impulse_.z};
+	json["isDirtyTexture"] = isDirtyTexture_;
+	json["isDrawOutline"] = isDrawOutline_;
+	json["isDrawSystemCoord"] = isDrawSystemCoord_;
+	json["isReverseMatrixCalculating"] = isReverseMatrixCalculating_;
+	json["matricesAreDirty"] = matricesAreDirty_;
+	json["maxPitch"] = maxPitch_;
+	json["maxSpeed"] = maxSpeed_;
+	json["name"] = name_;
+	json["origin"] = {origin_.x, origin_.y, origin_.z};
+	json["outlineColor"] = {outlineColor_.r, outlineColor_.g, outlineColor_.b, outlineColor_.a};
+	json["outlineSize"] = {outlineSize_.x, outlineSize_.y, outlineSize_.z};
+	json["position"] = {position_.x, position_.y, position_.z};
+	json["rotation"] = {rotation_.x, rotation_.y, rotation_.z};
+	json["scale"] = {scale_.x, scale_.y, scale_.z};
+	if (specularTexture_)
+	{
+		json["specularTexture"] = specularTexture_->toJson();
+	}
+	json["speed"] = speed_;
+	json["vao"] = vao_.getId();
+	json["vbo"] = vbo_.getId();
+	json["verticesAreDirty"] = verticesAreDirty_;
+	json["verticesCount"] = triangles_.size() / 3ull;
+	return json;
 }
 
 void SceneObject::setTextureRect(glm::vec2 rect)

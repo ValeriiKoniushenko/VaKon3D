@@ -56,13 +56,13 @@ void Camera::rotate(const glm::vec3& value_)
 	rotation_.y += value.x;
 	rotation_.x += value.y;
 
-	if (rotation_.x > maxPitch)
+	if (rotation_.x > maxPitch_)
 	{
-		rotation_.x = maxPitch;
+		rotation_.x = maxPitch_;
 	}
-	if (rotation_.x < -maxPitch)
+	if (rotation_.x < -maxPitch_)
 	{
-		rotation_.x = -maxPitch;
+		rotation_.x = -maxPitch_;
 	}
 
 	while (rotation_.y >= 360.f)

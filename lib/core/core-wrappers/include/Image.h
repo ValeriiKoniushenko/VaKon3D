@@ -23,13 +23,14 @@
 #pragma once
 
 #include "Gl.h"
+#include "JsonPrintable.h"
 #include "NotCopyableButMovable.h"
 #include "glm/glm.hpp"
 
 #include <filesystem>
 #include <string>
 
-class Image : Utils::NotCopyableButMovable
+class Image : Utils::NotCopyableButMovable, public JsonPrintable
 {
 public:
 	enum class Channel
@@ -66,6 +67,7 @@ public:
 	void clear();
 	[[nodiscard]] bool isEmpty() const;
 	[[nodiscard]] std::string getName() const;
+	[[nodiscard]] nlohmann::json toJson() const override;
 
 private:
 	void init_();

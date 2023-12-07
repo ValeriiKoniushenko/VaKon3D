@@ -27,6 +27,10 @@
 class CoordinateSystemVisualizer : public SceneObject
 {
 public:
+	void setDrawCoordinateSystem(bool isDraw) override
+	{ /*do nothing*/
+	}
+
 	CoordinateSystemVisualizer()
 	{
 		isDrawSystemCoord_ = true;

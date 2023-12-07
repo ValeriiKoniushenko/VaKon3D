@@ -100,10 +100,10 @@ public:
 
 	void update() override;
 
-	void setMass(float mass);
+	virtual void setMass(float mass);
 	[[nodiscard]] float getMass() const;
 
-	void setMaxSpeed(float value);
+	virtual void setMaxSpeed(float value);
 	[[nodiscard]] float getMaxSpeed() const;
 	[[nodiscard]] float getCurrentSpeed() const;
 
@@ -112,42 +112,42 @@ public:
 	virtual void setOrigin(const glm::vec3& origin);
 	[[nodiscard]] virtual const glm::vec3& getOrigin() const;
 
-	void setTexture(Texture& texture);
-	[[nodiscard]] Texture* getTexture();
-	[[nodiscard]] const Texture* getTexture() const;
+	void virtual setTexture(Texture& texture);
+	[[nodiscard]] virtual Texture* getTexture();
+	[[nodiscard]] virtual const Texture* getTexture() const;
 
-	void setSpecularTexture(Texture& texture);
-	[[nodiscard]] Texture* getSpecularTexture();
-	[[nodiscard]] const Texture* getSpecularTexture() const;
+	virtual void setSpecularTexture(Texture& texture);
+	[[nodiscard]] virtual Texture* getSpecularTexture();
+	[[nodiscard]] virtual const Texture* getSpecularTexture() const;
 
-	void setOutlineStatus(bool isEnable);
-	void toggleOutline();
-	[[nodiscard]] bool getOutlineStatus() const;
+	void virtual setOutlineStatus(bool isEnable);
+	void virtual toggleOutline();
+	[[nodiscard]] virtual bool getOutlineStatus() const;
 
-	[[nodiscard]] bool isDrawCoordinateSystem() const;
-	void setDrawCoordinateSystem(bool isDraw);
-	void toggleDrawCoordinateSystem();
+	[[nodiscard]] virtual bool isDrawCoordinateSystem() const;
+	virtual void setDrawCoordinateSystem(bool isDraw);
+	virtual void toggleDrawCoordinateSystem();
 
-	void setOutlineColor(const Color4& color);
-	[[nodiscard]] Color4 getOutlineColor() const;
+	virtual void setOutlineColor(const Color4& color);
+	[[nodiscard]] virtual Color4 getOutlineColor() const;
 
-	void setOutlineSize(const glm::vec3& size);
-	[[nodiscard]] glm::vec3 getOutlineSize() const;
+	virtual void setOutlineSize(const glm::vec3& size);
+	[[nodiscard]] virtual glm::vec3 getOutlineSize() const;
 
-	void setName(const std::string& name);
-	[[nodiscard]] const std::string& getName() const;
-	[[nodiscard]] std::string& getName();
+	virtual void setName(const std::string& name);
+	[[nodiscard]] virtual const std::string& getName() const;
+	[[nodiscard]] virtual std::string& getName();
 
-	void loadVertices(std::vector<TriangleVbo::Unit>& itWillBeMoved);
+	virtual void loadVertices(std::vector<TriangleVbo::Unit>& itWillBeMoved);
 
-	void setTextureRect(glm::vec2 rect);
+	virtual void setTextureRect(glm::vec2 rect);
 
 	[[nodiscard]] nlohmann::json toJson() const override;
 
-	[[nodiscard]] std::optional<glm::vec3> isIntersectsWithRayCast(const RayCast& ray) const;
+	[[nodiscard]] virtual std::optional<glm::vec3> isIntersectsWithRayCast(const RayCast& ray) const;
 
 protected:
-	void recalculateMatrices();
+	virtual void recalculateMatrices();
 	virtual void setVertices(){};
 	virtual void tryDrawCoordinateSystem(ShaderPack& shaderPack, Camera& camera);
 	virtual void tryDrawOutline(ShaderPack& shaderPack, Camera& camera);
@@ -162,7 +162,7 @@ protected:
 	float maxSpeed_{200.f};
 	float mass_ = 1.f;
 	glm::vec3 impulse_{};
-	float maxPitch = 90.f;
+	float maxPitch_ = 90.f;
 	glm::vec3 position_{0.f, 0.f, 0.f};
 	glm::vec3 rotation_{};
 	bool matricesAreDirty_ = true;
