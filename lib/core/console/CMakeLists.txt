@@ -26,4 +26,5 @@ target_link_libraries(
 	Boost
 	freetype
 	Editor-Integration
+	Scene-Objects
 )

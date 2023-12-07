@@ -22,11 +22,30 @@
 
 #include "Commands.h"
 
+#include "SceneObject.h"
+#include "SceneObjectCollector.h"
+
 #include <iostream>
 
 void CommandOutlineForAll::run(const std::vector<std::string>& args)
 {
-	response_ = "Successful command executing";
+	if (args.empty())
+	{
+		response_ = "No args use next template: " + getHints();
+		return;
+	}
+
+	int status = atoi(args.front().c_str());
+
+	std::size_t count = 0;
+	for (auto object : GetSceneObjectCollector())
+	{
+		++count;
+		object->setOutlineStatus(status);
+	}
+	response_ += "Successful command executing. Object outlining was ";
+	response_ += (status ? "enabled" : "disabled");
+	response_ += " for " + std::to_string(count) + "pcs of Objects";
 }
 
 void CommandPrint::run(const std::vector<std::string>& args)
