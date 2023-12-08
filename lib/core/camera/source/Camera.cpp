@@ -29,6 +29,7 @@
 
 Camera::Camera()
 {
+	setName("Camera");
 	isReverseMatrixCalculating_ = true;
 	onRecalculateMatrices.subscribe(
 		[this]()

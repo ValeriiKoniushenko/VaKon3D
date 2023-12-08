@@ -27,6 +27,8 @@
 class Cube : public SceneObject
 {
 public:
+	Cube();
+
 	[[nodiscard]] nlohmann::json toJson() const override;
 
 	void setSize(float size);

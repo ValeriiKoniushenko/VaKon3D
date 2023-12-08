@@ -93,3 +93,8 @@ void Cube::setVertices()
 	triangles_.emplace_back(Unit{{size_, 0.f, 0.f}, {1.f, 0.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
 	triangles_.emplace_back(Unit{{0.f, 0.f, 0.f}, {0.f, 0.f}, {0.f, -1.f, 0.f}, {textureSize.x, textureSize.y}});
 }
+
+Cube::Cube()
+{
+	setName("Cube");
+}
