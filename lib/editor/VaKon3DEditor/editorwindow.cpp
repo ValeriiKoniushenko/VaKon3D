@@ -136,6 +136,7 @@ void EditorWindow::onEnterDataToConsole()
 	if (ui->lineEditConsole->text() == "cls")
 	{
 		ui->plainTextEditConsole->clear();
+		ui->lineEditConsole->clear();
 		return;
 	}
 
