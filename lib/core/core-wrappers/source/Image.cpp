@@ -25,12 +25,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Image::Image(std::filesystem::path&& path, Gl::Texture::Channel channel /* = Gl::Texture::Channel::SRGB*/)
+Image::Image(std::filesystem::path path, Gl::Texture::Channel channel /* = Gl::Texture::Channel::SRGB*/)
 {
 	init_();
 	if (!path.empty())
 	{
-		loadImage(std::forward<std::filesystem::path>(path));
+		loadImage(std::move(path));
 	}
 	setInternalChannel(channel);
 }
@@ -137,6 +137,11 @@ void Image::loadImage(std::filesystem::path&& path, bool isFlipVertically)
 
 	channel_ = static_cast<Channel>(channel);
 	name_ = path.stem().string();
+}
+
+void Image::loadImage(const std::filesystem::path& path, bool isFlipVertically)
+{
+	loadImage(path);
 }
 
 void Image::clear()

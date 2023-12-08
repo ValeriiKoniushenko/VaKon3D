@@ -80,7 +80,7 @@ public:
 class CommandGetObject : public BaseCommand
 {
 public:
-	CommandGetObject() : BaseCommand("get-object", "get-object <index|name>")
+	CommandGetObject() : BaseCommand("get-object", "get-object <index|name> [index|name]...")
 	{
 	}
 

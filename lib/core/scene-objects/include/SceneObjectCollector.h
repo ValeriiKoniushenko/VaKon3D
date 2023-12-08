@@ -39,6 +39,9 @@ public:
 	[[nodiscard]] std::vector<SceneObject*>::iterator end();
 	[[nodiscard]] std::vector<SceneObject*>::const_iterator end() const;
 
+	SceneObject* at(std::size_t index);
+	SceneObject* at(const std::string& name);
+
 private:
 	std::vector<SceneObject*> data_;
 };

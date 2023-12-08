@@ -121,7 +121,23 @@ glm::vec2 Camera::getSensitive() const
 
 nlohmann::json Camera::toJson() const
 {
-	return {};
+	auto json = SceneObject::toJson();
+
+	json["cachedProjMatrix"] = {{cachedProjMatrix_[0].x, cachedProjMatrix_[0].y, cachedProjMatrix_[0].z, cachedProjMatrix_[0].w},
+		{cachedProjMatrix_[1].x, cachedProjMatrix_[1].y, cachedProjMatrix_[1].z, cachedProjMatrix_[1].w},
+		{cachedProjMatrix_[2].x, cachedProjMatrix_[2].y, cachedProjMatrix_[2].z, cachedProjMatrix_[2].w},
+		{cachedProjMatrix_[3].x, cachedProjMatrix_[3].y, cachedProjMatrix_[3].z, cachedProjMatrix_[3].w}};
+	json["cachedCalculatedMatrix"] = {
+		{cachedCalculatedMatrix_[0].x, cachedCalculatedMatrix_[0].y, cachedCalculatedMatrix_[0].z, cachedCalculatedMatrix_[0].w},
+		{cachedCalculatedMatrix_[1].x, cachedCalculatedMatrix_[1].y, cachedCalculatedMatrix_[1].z, cachedCalculatedMatrix_[1].w},
+		{cachedCalculatedMatrix_[2].x, cachedCalculatedMatrix_[2].y, cachedCalculatedMatrix_[2].z, cachedCalculatedMatrix_[2].w},
+		{cachedCalculatedMatrix_[3].x, cachedCalculatedMatrix_[3].y, cachedCalculatedMatrix_[3].z, cachedCalculatedMatrix_[3].w}};
+	json["far"] = far_;
+	json["fov"] = fov_;
+	json["near"] = near_;
+	json["sensitive"] = {sensitive_.x, sensitive_.y};
+
+	return json;
 }
 
 glm::vec3 Camera::getPosition() const

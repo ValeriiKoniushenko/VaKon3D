@@ -22,6 +22,8 @@
 
 #include "SceneObjectCollector.h"
 
+#include "SceneObject.h"
+
 SceneObjectCollector& GetSceneObjectCollector()
 {
 	return SceneObjectCollector::instance();
@@ -55,4 +57,15 @@ std::vector<SceneObject*>::iterator SceneObjectCollector::end()
 std::vector<SceneObject*>::const_iterator SceneObjectCollector::end() const
 {
 	return data_.cend();
+}
+
+SceneObject* SceneObjectCollector::at(std::size_t index)
+{
+	return data_.at(index);
+}
+
+SceneObject* SceneObjectCollector::at(const std::string& name)
+{
+	auto it = std::find_if(data_.begin(), data_.end(), [&name](SceneObject* obj) { return obj->getName() == name; });
+	return it == data_.end() ? nullptr : *it;
 }

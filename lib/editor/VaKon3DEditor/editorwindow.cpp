@@ -132,6 +132,13 @@ void EditorWindow::onEnterDataToConsole()
 		ui->plainTextEditConsole->appendPlainText("The connection wasn't established");
 		return;
 	}
+
+	if (ui->lineEditConsole->text() == "cls")
+	{
+		ui->plainTextEditConsole->clear();
+		return;
+	}
+
 	{
 		EditorNetworkProtocol::Body body;
 		body.content = ui->lineEditConsole->text().toStdString();

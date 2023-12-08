@@ -24,6 +24,7 @@
 
 #include "SceneObject.h"
 #include "SceneObjectCollector.h"
+#include "UtilsFunctions.h"
 
 #include <iostream>
 
@@ -60,5 +61,37 @@ void CommandPrint::run(const std::vector<std::string>& args)
 
 void CommandGetObject::run(const std::vector<std::string>& args)
 {
-	response_ = "Successful command executing";
+	response_ = "Objects: \n";
+	for (const auto& arg : args)
+	{
+		try
+		{
+			if (Utils::isNumber(arg))
+			{
+				if (SceneObject* obj = GetSceneObjectCollector().at(atoi(arg.c_str())))
+				{
+					response_ += obj->toJson().dump(3) + "\n";
+				}
+				else
+				{
+					response_ += "No such object: " + arg + "\n";
+				}
+			}
+			else
+			{
+				if (SceneObject* obj = GetSceneObjectCollector().at(arg))
+				{
+					response_ += obj->toJson().dump(3) + "\n";
+				}
+				else
+				{
+					response_ += "No such object: " + arg + "\n";
+				}
+			}
+		}
+		catch (std::runtime_error& error)
+		{
+			response_ += "No such object by index: " + arg + "\n";
+		}
+	}
 }

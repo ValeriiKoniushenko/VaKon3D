@@ -47,7 +47,7 @@ public:
 	[[nodiscard]] static std::string channelToString(Channel channel);
 	[[nodiscard]] static GLenum convertChannelToGlChannel(Channel channel);
 
-	explicit Image(std::filesystem::path&& path = "", Gl::Texture::Channel channel = Gl::Texture::Channel::SRGB);
+	explicit Image(std::filesystem::path path = "", Gl::Texture::Channel channel = Gl::Texture::Channel::SRGB);
 
 	Image(Image&& obj) noexcept;
 	Image& operator=(Image&& obj) noexcept;
@@ -62,6 +62,7 @@ public:
 	[[nodiscard]] const unsigned char* data() const;
 	void setInternalChannel(Gl::Texture::Channel channel);
 	[[nodiscard]] Gl::Texture::Channel getInternalChannel() const;
+	void loadImage(const std::filesystem::path&, bool isFlipVertically = true);
 	void loadImage(std::filesystem::path&&, bool isFlipVertically = true);
 	void loadToGpu();
 	void clear();

@@ -30,6 +30,8 @@
 
 #include <Windows.h>
 
+#include <filesystem>
+
 class Window : public Singleton<Window>
 {
 public:
@@ -43,6 +45,7 @@ public:
 	[[nodiscard]] HWND getHwnd();
 	[[nodiscard]] Utils::ISize2D getSize() const;
 	void setCursorPosition(double xpos, double ypos);
+	void setIcon(const std::filesystem::path& pathToIco);
 
 	LambdaMulticastDelegate<void(int, int, int, int)> onKeyPressed;
 	LambdaMulticastDelegate<void(unsigned int)> onTextInput;

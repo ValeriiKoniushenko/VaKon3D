@@ -23,6 +23,7 @@
 #include "Window.h"
 
 #include "Gl.h"
+#include "Image.h"
 #include "Logger.h"
 #include "WorldVariables.h"
 
@@ -117,6 +118,16 @@ Utils::ISize2D Window::getSize() const
 void Window::setCursorPosition(double xpos, double ypos)
 {
 	glfwSetCursorPos(window, xpos, ypos);
+}
+
+void Window::setIcon(const std::filesystem::path& pathToIco)
+{
+	Image image(pathToIco, Gl::Texture::Channel::RGB);
+	GLFWimage glfwImage;
+	glfwImage.width = image.getWidth();
+	glfwImage.height = image.getHeight();
+	glfwImage.pixels = image.data();
+	glfwSetWindowIcon(window, 1, &glfwImage);
 }
 
 Window& GetWindow()
