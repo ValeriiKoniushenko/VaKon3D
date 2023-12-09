@@ -14,6 +14,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
 set(TS_FILES VaKon3DEditor_en_US.ts)
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/../../../assets/icon/AppIcon.rc")
+
 set(PROJECT_SOURCES
 	main.cpp
 	editorwindow.cpp
@@ -26,6 +28,7 @@ if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 	qt_add_executable(VaKon3DEditor
 		MANUAL_FINALIZATION
 		${PROJECT_SOURCES}
+		${app_icon_resource_windows}
 	)
 	# Define target properties for Android with Qt 6 as:
 	#    set_property(TARGET VaKon3DEditor APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
