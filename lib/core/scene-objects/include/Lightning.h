@@ -37,12 +37,12 @@ struct Lightning
 	struct Specular
 	{
 		GlColor3 lightColor = {1.f, 1.f, 1.f};
-		glm::vec3 position = {1000.f, 0.f, 0.f};
+		glm::vec3 position = {1000.f, 1000.f, 1000.f};
 		float intensity = 0.3f;
 		int specularPow = 1024;
 	} specular;
 
-	struct For
+	struct Fog
 	{
 		Color4 color = {0, 0, 0, 0};
 		float minDistance = 4000.f;

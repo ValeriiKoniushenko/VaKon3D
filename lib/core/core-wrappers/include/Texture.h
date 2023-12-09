@@ -41,6 +41,7 @@ public:
 	Texture(Texture&& other) noexcept;
 	Texture& operator=(Texture&& other) noexcept;
 
+	void generate();
 	void bind() const;
 	void unbind() const;
 	void destroy();
@@ -68,9 +69,6 @@ public:
 	[[nodiscard]] std::string getName() const;
 
 	[[nodiscard]] nlohmann::json toJson() const override;
-
-private:
-	void generate();
 
 private:
 	GLuint id_ = Gl::Texture::invalidId;

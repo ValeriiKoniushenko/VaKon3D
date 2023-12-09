@@ -45,11 +45,13 @@ private:
 public:
 	using TimeT = std::chrono::milliseconds;
 
-	InputAction(const std::string& name, KeyT key) : name_(name), key_(key)
+	InputAction() = default;
+
+	explicit InputAction(const std::string& name) : name_(name)
 	{
 	}
 
-	explicit InputAction(const std::string& name) : name_(name)
+	InputAction(const std::string& name, KeyT key) : name_(name), key_(key)
 	{
 	}
 
@@ -97,12 +99,12 @@ public:
 		}
 	}
 
-	void setKey(Keyboard::Key key)
+	void setKey(KeyT key)
 	{
 		key_ = key;
 	}
 
-	[[nodiscard]] Keyboard::Key getKey() const
+	[[nodiscard]] KeyT getKey() const
 	{
 		return key_;
 	}
@@ -135,6 +137,7 @@ protected:
 class KeyboardInputAction : public InputAction<Keyboard::Key>
 {
 public:
+	KeyboardInputAction() = default;
 	KeyboardInputAction(const std::string& name, Keyboard::Key key);
 
 protected:
@@ -144,6 +147,7 @@ protected:
 class MouseInputAction : public InputAction<Mouse::Key>
 {
 public:
+	MouseInputAction();
 	MouseInputAction(const std::string& name, Mouse::Key key);
 	explicit MouseInputAction(const std::string& name);
 

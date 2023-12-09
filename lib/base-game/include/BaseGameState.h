@@ -27,7 +27,16 @@
 class BaseGameState : public Utils::NotCopyableAndNotMovable
 {
 public:
+	explicit BaseGameState(int layoutIndex) : layoutIndex_(layoutIndex)
+	{
+	}
+
+	virtual void onCreate() = 0;
+	virtual void onTick() = 0;
+
+	[[nodiscard]] int getLayoutIndex() const;
+	void setLayoutIndex(int index);
 
 private:
-
+	int layoutIndex_ = 0;
 };

@@ -41,21 +41,23 @@ public:
 
 	void setColor(const Color4& color);
 
-	void generate();
-
 	void draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& camera);
 
-	void setWidth(GLfloat width);
+	void setLineWidth(GLfloat width);
 	[[nodiscard]] GLfloat getWidth() const;
 
 	void setSize(int count);
 
 private:
-	int count_ = 500;
+	void generate();
+
+private:
+	int count_ = 10'000;
 	float gap_ = 100.f;
 	float size_ = 0.f;
-	GLfloat width_{1.f};
+	GLfloat width_{2.f};
 	Vbo vbo;
 	Vao vao;
-	Color4 lineColor_;
+	Color4 lineColor_ = {92, 107, 96, 49};
+	bool isDirty_ = true;
 };

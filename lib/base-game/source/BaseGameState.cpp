@@ -21,3 +21,13 @@
 // SOFTWARE.
 
 #include "BaseGameState.h"
+
+int BaseGameState::getLayoutIndex() const
+{
+	return layoutIndex_;
+}
+
+void BaseGameState::setLayoutIndex(int index)
+{
+	layoutIndex_ = index;
+}

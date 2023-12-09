@@ -80,6 +80,12 @@ void Grid::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& came
 	auto& shader = shaderPack["line"];
 	shader.use();
 
+	if (isDirty_)
+	{
+		generate();
+		isDirty_ = false;
+	}
+
 	shader.uniform("uViewPosition", camera.getPosition());
 	shader.uniform("uLineColor", toGlColor4(lineColor_));
 	shader.uniform("uProjectionView", false, camera.getMatrix());
@@ -90,11 +96,14 @@ void Grid::draw(ShaderPack& shaderPack, const Lightning& lightning, Camera& came
 	vao.bind();
 	glDepthFunc(GL_ALWAYS);
 	glLineWidth(width_);
-	Gl::drawArrays(GL_LINES, 0, count_ * 2 * 2 * 2);
+	if (count_ > 0)
+	{
+		Gl::drawArrays(GL_LINES, 0, count_ * 2 * 2 * 2);
+	}
 	glDepthFunc(GL_LESS);
 }
 
-void Grid::setWidth(GLfloat width)
+void Grid::setLineWidth(GLfloat width)
 {
 	width_ = width;
 }
@@ -107,5 +116,5 @@ GLfloat Grid::getWidth() const
 void Grid::setSize(int count)
 {
 	count_ = count;
-	generate();
+	isDirty_ = true;
 }

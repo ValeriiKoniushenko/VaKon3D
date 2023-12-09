@@ -35,6 +35,11 @@ bool KeyboardInputAction::isKeyPressed() const
 	return false;
 }
 
+MouseInputAction::MouseInputAction()
+{
+	init();
+}
+
 MouseInputAction::MouseInputAction(const std::string& name, Mouse::Key key) : InputAction(name, key)
 {
 	init();
