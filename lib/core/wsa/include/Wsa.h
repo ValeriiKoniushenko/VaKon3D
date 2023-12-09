@@ -5,6 +5,7 @@
 class Wsa : public Singleton<Wsa>
 {
 public:
+	~Wsa();
 	static std::string errorCodeToString(int code);
 	void initialize(int major, int minor);
 	void requireNoErrors();

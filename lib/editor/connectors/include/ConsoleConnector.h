@@ -22,28 +22,38 @@
 
 #pragma once
 
-#include "ClientSocket.h"
-#include "Console.h"
-#include "NotCopyableButMovable.h"
-#include "json.hpp"
+#include "Delegate.h"
+#include "NotCopyableAndNotMovable.h"
 
-#include <thread>
+#include <filesystem>
+#include <string>
+#include <vector>
 
-class EditorIntegration : public Utils::NotCopyableButMovable
+class TCPClientSocket;
+
+class ConsoleConnector : public Utils::NotCopyableAndNotMovable
 {
 public:
-	EditorIntegration();
-	~EditorIntegration() override;
+	inline static const std::filesystem::path pathToHistory = "history.txt";
 
-	void connectToEditor();
+	ConsoleConnector(TCPClientSocket& acceptedClient);
 
-	Console console;
+	void deserializeConsoleCommands();
+	void serializeConsoleCommands();
+	void addCommandToHistory(const std::string& command);
+	std::string previousCommand();
+	std::string nextCommand();
+	std::string getCommandByIndex(std::size_t index);
+	std::string getCommandByIndexRevers(std::size_t index);
+	void executeConsoleCommand(const std::string& command);
+
+	LambdaMulticastDelegate<void(const std::string&)> onDeserializeOneCommand;
+	LambdaMulticastDelegate<void()> onClearScreen;
+	LambdaMulticastDelegate<void(const std::string&)> onAddCommand;
+	LambdaMulticastDelegate<void(const std::string&)> onResponse;
 
 private:
-	nlohmann::json getEditorRequest();
-	void giveResponseToTheConsole(const std::string& response);
-
-private:
-	TCPClientSocket clientSocket;
-	std::jthread mainNetworkThread;
+	TCPClientSocket& acceptedClient_;
+	std::vector<std::string> commands_;
+	int currentCommandIndex = -1;
 };

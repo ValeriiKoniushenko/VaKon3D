@@ -56,6 +56,7 @@ target_link_libraries(VaKon3DEditor PRIVATE
 	Qt${QT_VERSION_MAJOR}::Widgets
 	Socket
 	Console
+	Connectors
 	Editor-Integration
 )
 

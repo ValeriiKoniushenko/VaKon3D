@@ -7,12 +7,35 @@
 #include <fstream>
 #include <iostream>
 
-EditorWindow::EditorWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::EditorWindow)
+EditorWindow::EditorWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::EditorWindow), consoleConnector(acceptedClient)
 {
 	ui->setupUi(this);
 	fillUpTabTree();
 	ui->treeWidget->expandAll();
-	deserializeConsoleCommands();
+
+	consoleConnector.onDeserializeOneCommand.subscribe(
+		[this](const std::string& command)
+		{
+			if (ui)
+			{
+				addConsoleCommandToScreen(command.c_str(), false);
+			}
+		});
+	consoleConnector.deserializeConsoleCommands();
+	consoleConnector.onAddCommand.subscribe(
+		[this](const std::string& command)
+		{
+			addConsoleCommandToScreen(command.c_str(), false);
+			ui->lineEditConsole->clear();
+		});
+	consoleConnector.onClearScreen.subscribe(
+		[this]()
+		{
+			ui->plainTextEditConsole->clear();
+			ui->lineEditConsole->clear();
+		});
+	consoleConnector.onResponse.subscribe(
+		[this](const std::string& response) { addConsoleCommandToScreen(response.c_str(), true); });
 
 	Wsa::instance().initialize(1, 1);
 	// onConnectToServer(false);
@@ -20,7 +43,6 @@ EditorWindow::EditorWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::Ed
 	connect(ui->treeWidget, &QTreeWidget::itemClicked, this, &EditorWindow::onTabClicked);
 	connect(ui->pushButtonConnect, &QPushButton::clicked, this, &EditorWindow::onConnectToServer);
 	connect(ui->lineEditConsole, &QLineEdit::returnPressed, this, &EditorWindow::onEnterDataToConsole);
-	connect(ui->lineEditConsole, &QLineEdit::textChanged, this, &EditorWindow::onTextChangedConsoleLineEdit);
 	connect(ui->pushButtonConsoleEnter, &QPushButton::pressed, this, &EditorWindow::onEnterDataToConsole);
 	ui->lineEditConsole->installEventFilter(this);
 }
@@ -93,13 +115,15 @@ void EditorWindow::onTabClicked(QTreeWidgetItem* item, int column)
 {
 	if (item->text(column) == Tabs::Console::title)
 	{
-		int i = ui->stackedWidget->count();
 		ui->stackedWidget->setCurrentIndex(0);
 	}
 	else if (item->text(column) == Tabs::General::title)
 	{
-		int i = ui->stackedWidget->count();
 		ui->stackedWidget->setCurrentIndex(1);
+	}
+	else if (item->text(column) == "Scene Object Collector")
+	{
+		ui->stackedWidget->setCurrentIndex(2);
 	}
 }
 
@@ -137,85 +161,13 @@ void EditorWindow::onEnterDataToConsole()
 
 void EditorWindow::executeConsoleCommand(const QString& command)
 {
-	if (command == "cls")
-	{
-		ui->plainTextEditConsole->clear();
-		ui->lineEditConsole->clear();
-		return;
-	}
-
-	{
-		EditorNetworkProtocol::Body body;
-		body.content = command.toStdString();
-		body.action = "console";
-		const auto bodyString = EditorNetworkProtocol::Body::generate(body);
-		const auto headerString = EditorNetworkProtocol::Header::generate(bodyString.size());
-
-		std::vector<char> headerData(headerString.begin(), headerString.end());
-		headerData.resize(EditorNetworkProtocol::Header::length);
-
-		acceptedClient.send(headerData);
-		acceptedClient.send(bodyString);
-	}
-
-	addConsoleCommandToScreen(command, false);
-	ui->lineEditConsole->clear();
-
-	{
-		auto header = nlohmann::json::parse(acceptedClient.receiveAsString(EditorNetworkProtocol::Header::length));
-
-		const std::size_t bodyLength = header[EditorNetworkProtocol::Header::lengthPropertyName];
-		auto body = nlohmann::json::parse(acceptedClient.receiveAsString(bodyLength + 1ull));
-
-		if (body[EditorNetworkProtocol::Body::possibleActionsPropertyName] == "response-to-console")
-		{
-			addConsoleCommandToScreen(body[EditorNetworkProtocol::Body::contentPropertyName].get<std::string*>()->c_str(), true);
-		}
-	}
-
-	commands_.push_back(command);
+	consoleConnector.executeConsoleCommand(command.toStdString());
 }
 
 void EditorWindow::closeEvent(QCloseEvent* event)
 {
-	serializeConsoleCommands();
+	consoleConnector.serializeConsoleCommands();
 	QWidget::closeEvent(event);
-}
-
-void EditorWindow::serializeConsoleCommands()
-{
-	std::ofstream file(pathToHistory);
-	if (file.is_open())
-	{
-		for (auto& command : commands_)
-		{
-			file << command.toStdString() << std::endl;
-		}
-		file.close();
-	}
-}
-
-void EditorWindow::deserializeConsoleCommands()
-{
-	std::ifstream file(pathToHistory);
-	if (file.is_open())
-	{
-		while (!file.eof())
-		{
-			std::string line;
-			std::getline(file, line);
-			if (!line.empty())
-			{
-				if (ui)
-				{
-					addConsoleCommandToScreen(line.c_str(), false);
-				}
-				commands_.emplace_back(line.c_str());
-			}
-		}
-
-		file.close();
-	}
 }
 
 void EditorWindow::addConsoleCommandToScreen(const QString& command, bool isIn)
@@ -229,22 +181,26 @@ bool EditorWindow::eventFilter(QObject* obj, QEvent* event)
 	{
 		if (event->type() == QEvent::KeyPress)
 		{
-			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+			auto* keyEvent = static_cast<QKeyEvent*>(event);
 			if (keyEvent->key() == Qt::Key_Up)
 			{
-				if (currentCommandIndex + 1 < commands_.size())
+				if (auto command = consoleConnector.previousCommand(); !command.empty())
 				{
-					++currentCommandIndex;
-					ui->lineEditConsole->setText(commands_.at(commands_.size() - currentCommandIndex - 1));
+					if (ui)
+					{
+						ui->lineEditConsole->setText(command.c_str());
+					}
 				}
 				return true;
 			}
 			else if (keyEvent->key() == Qt::Key_Down)
 			{
-				if (currentCommandIndex - 1 >= 0)
+				if (auto command = consoleConnector.nextCommand(); !command.empty())
 				{
-					--currentCommandIndex;
-					ui->lineEditConsole->setText(commands_.at(commands_.size() - currentCommandIndex - 1));
+					if (ui)
+					{
+						ui->lineEditConsole->setText(command.c_str());
+					}
 				}
 				return true;
 			}
@@ -252,8 +208,4 @@ bool EditorWindow::eventFilter(QObject* obj, QEvent* event)
 		return false;
 	}
 	return QMainWindow::eventFilter(obj, event);
-}
-
-void EditorWindow::onTextChangedConsoleLineEdit(const QString&)
-{
 }

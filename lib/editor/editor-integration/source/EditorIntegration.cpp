@@ -22,6 +22,8 @@
 
 #include "EditorIntegration.h"
 
+#include "EditorNetworkProtocol.h"
+
 #include <Windows.h>
 
 #include <iostream>
@@ -41,39 +43,42 @@ void EditorIntegration::connectToEditor()
 	std::jthread tmp(
 		[this](std::stop_token token)
 		{
-			while (!clientSocket.isConnected() && !token.stop_requested())
+			while (!token.stop_requested())
 			{
+				while (!clientSocket.isConnected() && !token.stop_requested())
+				{
+					try
+					{
+						clientSocket.open(AddressFamily::Inet);
+						clientSocket.connectTo(SocketAddress("127.0.0.1", 48989));
+					}
+					catch (...)
+					{
+						// do nothing
+					}
+				}
+				if (!clientSocket.isConnected())
+				{
+					return;
+				}
+
 				try
 				{
-					clientSocket.open(AddressFamily::Inet);
-					clientSocket.connectTo(SocketAddress("127.0.0.1", 48989));
+					while (!token.stop_requested())
+					{
+						auto request = getEditorRequest();
+						auto actions = request[EditorNetworkProtocol::Body::possibleActionsPropertyName];
+						if (actions == "console")
+						{
+							const auto response = console.runCommand(request[EditorNetworkProtocol::Body::contentPropertyName]);
+							giveResponseToTheConsole(response);
+						}
+					}
 				}
 				catch (...)
 				{
-					// do nothing
+					MessageBoxA(nullptr, "Was got an exception", "Editor-Connection error", MB_OK);
 				}
-			}
-			if (!clientSocket.isConnected())
-			{
-				return;
-			}
-
-			try
-			{
-				while (!token.stop_requested())
-				{
-					auto request = getEditorRequest();
-					auto actions = request[EditorNetworkProtocol::Body::possibleActionsPropertyName];
-					if (actions == "console")
-					{
-						const auto response = console.runCommand(request[EditorNetworkProtocol::Body::contentPropertyName]);
-						giveResponseToTheConsole(response);
-					}
-				}
-			}
-			catch (...)
-			{
-				MessageBoxA(nullptr, "Was got an exception", "Editor-Connection error", MB_OK);
 			}
 		});
 

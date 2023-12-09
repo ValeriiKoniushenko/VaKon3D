@@ -36,8 +36,9 @@ add_subdirectory(lib/core/window)
 add_subdirectory(lib/core/world)
 add_subdirectory(lib/core/wsa)
 
-add_subdirectory(lib/editor/VaKon3DEditor)
+add_subdirectory(lib/editor/connectors)
 add_subdirectory(lib/editor/editor-integration)
+add_subdirectory(lib/editor/VaKon3DEditor)
 
 add_subdirectory(lib/boost)
 add_subdirectory(lib/glad)

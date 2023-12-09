@@ -83,7 +83,7 @@ public:
 				{
 					if (std::chrono::duration_cast<TimeT>(std::chrono::system_clock::now() - lastUpdate_) >= frequency_)
 					{
-						onAction.trigger();
+						onPress.trigger();
 						onActionPrivate_.trigger();
 						lastUpdate_ = std::chrono::system_clock::now();
 						lastState_ = State::Pressed;
@@ -117,7 +117,7 @@ public:
 		isRepeatable_ = isRepeatable;
 	}
 
-	LambdaMulticastDelegate<void()> onAction;
+	LambdaMulticastDelegate<void()> onPress;
 
 protected:
 	[[nodiscard]] virtual bool isKeyPressed() const = 0;
