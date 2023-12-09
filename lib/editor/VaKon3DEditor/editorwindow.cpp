@@ -4,6 +4,7 @@
 #include "EditorIntegration.h"
 #include "Wsa.h"
 
+#include <fstream>
 #include <iostream>
 
 EditorWindow::EditorWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::EditorWindow)
@@ -11,6 +12,7 @@ EditorWindow::EditorWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::Ed
 	ui->setupUi(this);
 	fillUpTabTree();
 	ui->treeWidget->expandAll();
+	deserializeConsoleCommands();
 
 	Wsa::instance().initialize(1, 1);
 	onConnectToServer(false);
@@ -99,11 +101,6 @@ void EditorWindow::onTabClicked(QTreeWidgetItem* item, int column)
 	}
 }
 
-void EditorWindow::paintEvent(QPaintEvent* event)
-{
-	QWidget::paintEvent(event);
-}
-
 void EditorWindow::onConnectToServer(bool checked)
 {
 	if (!isConnected)
@@ -133,7 +130,12 @@ void EditorWindow::onEnterDataToConsole()
 		return;
 	}
 
-	if (ui->lineEditConsole->text() == "cls")
+	executeConsoleCommand(ui->lineEditConsole->text());
+}
+
+void EditorWindow::executeConsoleCommand(const QString& command)
+{
+	if (command == "cls")
 	{
 		ui->plainTextEditConsole->clear();
 		ui->lineEditConsole->clear();
@@ -142,7 +144,7 @@ void EditorWindow::onEnterDataToConsole()
 
 	{
 		EditorNetworkProtocol::Body body;
-		body.content = ui->lineEditConsole->text().toStdString();
+		body.content = command.toStdString();
 		body.action = "console";
 		const auto bodyString = EditorNetworkProtocol::Body::generate(body);
 		const auto headerString = EditorNetworkProtocol::Header::generate(bodyString.size());
@@ -154,7 +156,7 @@ void EditorWindow::onEnterDataToConsole()
 		acceptedClient.send(bodyString);
 	}
 
-	ui->plainTextEditConsole->appendPlainText(ui->lineEditConsole->text());
+	addConsoleCommandToScreen(command, false);
 	ui->lineEditConsole->clear();
 
 	{
@@ -165,8 +167,56 @@ void EditorWindow::onEnterDataToConsole()
 
 		if (body[EditorNetworkProtocol::Body::possibleActionsPropertyName] == "response-to-console")
 		{
-			ui->plainTextEditConsole->appendPlainText(
-				QString(body[EditorNetworkProtocol::Body::contentPropertyName].get<std::string*>()->c_str()));
+			addConsoleCommandToScreen(body[EditorNetworkProtocol::Body::contentPropertyName].get<std::string*>()->c_str(), true);
 		}
 	}
+
+	commands_.push_back(command);
+}
+
+void EditorWindow::closeEvent(QCloseEvent* event)
+{
+	serializeConsoleCommands();
+	QWidget::closeEvent(event);
+}
+
+void EditorWindow::serializeConsoleCommands()
+{
+	std::ofstream file(pathToHistory);
+	if (file.is_open())
+	{
+		for (auto& command : commands_)
+		{
+			file << command.toStdString() << std::endl;
+		}
+		file.close();
+	}
+}
+
+void EditorWindow::deserializeConsoleCommands()
+{
+	std::ifstream file(pathToHistory);
+	if (file.is_open())
+	{
+		while (!file.eof())
+		{
+			std::string line;
+			std::getline(file, line);
+			if (!line.empty())
+			{
+				if (ui)
+				{
+					addConsoleCommandToScreen(line.c_str(), false);
+				}
+				commands_.push_back(line.c_str());
+			}
+		}
+
+		file.close();
+	}
+}
+
+void EditorWindow::addConsoleCommandToScreen(const QString& command, bool isIn)
+{
+	ui->plainTextEditConsole->appendPlainText((isIn ? "> " : "< ") + command);
 }

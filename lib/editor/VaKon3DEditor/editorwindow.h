@@ -4,6 +4,7 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
+#include <filesystem>
 
 QT_BEGIN_NAMESPACE
 
@@ -69,21 +70,28 @@ public:
 		};
 	};
 
+	inline static const std::filesystem::path pathToHistory = "history.txt";
+
 	EditorWindow(QWidget* parent = nullptr);
 	~EditorWindow();
 
 protected:
-	void paintEvent(QPaintEvent* event) override;
+	void closeEvent(QCloseEvent* event) override;
 
 private:
 	void fillUpTabTree();
 	void onConnectToServer(bool checked);
+	void executeConsoleCommand(const QString& command);
+	void addConsoleCommandToScreen(const QString& command, bool isIn);
+	void deserializeConsoleCommands();
+	void serializeConsoleCommands();
 
 	// slots
 	void onTabClicked(QTreeWidgetItem* item, int column);
 	void onEnterDataToConsole();
 
 private:
+	std::vector<QString> commands_;
 	Ui::EditorWindow* ui;
 	TCPServerSocket serverSocket;
 	TCPClientSocket acceptedClient;
