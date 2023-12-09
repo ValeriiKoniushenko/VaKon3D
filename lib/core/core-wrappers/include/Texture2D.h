@@ -50,6 +50,7 @@ public:
 	void setMinFilter(Gl::Texture::MinFilter filter);
 	[[nodiscard]] Gl::Texture::MinFilter getMinFilter() const;
 	[[nodiscard]] GLuint glData();
+	[[nodiscard]] Texture& getRawTexture();
 
 private:
 	Texture texture_;

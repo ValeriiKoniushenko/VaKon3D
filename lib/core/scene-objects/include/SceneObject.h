@@ -32,10 +32,11 @@
 #include "Vao.h"
 #include "glm/glm.hpp"
 
-class ShaderPack;
 class Camera;
-class Texture;
 class RayCast;
+class ShaderPack;
+class Texture2D;
+class Texture;
 
 class SceneObject : public JsonPrintable, public Updateable
 {
@@ -112,7 +113,8 @@ public:
 	virtual void setOrigin(const glm::vec3& origin);
 	[[nodiscard]] virtual const glm::vec3& getOrigin() const;
 
-	void virtual setTexture(Texture& texture);
+	virtual void setTexture(Texture2D& texture);
+	virtual void setTexture(Texture& texture);
 	[[nodiscard]] virtual Texture* getTexture();
 	[[nodiscard]] virtual const Texture* getTexture() const;
 

@@ -28,6 +28,7 @@
 #include "SceneObjectCollector.h"
 #include "ShaderPack.h"
 #include "Texture.h"
+#include "Texture2D.h"
 #include "WorldVariables.h"
 #include "glad.h"
 #include "glm/gtx/transform.hpp"
@@ -555,6 +556,12 @@ void SceneObject::tryDrawOutline(ShaderPack& shaderPack, Camera& camera)
 	glClear(GL_STENCIL_BUFFER_BIT);
 
 	scale(-outlineSize_);
+}
+
+void SceneObject::setTexture(Texture2D& texture)
+{
+	diffuseTexture_ = &texture.getRawTexture();
+	isDirtyTexture_ = true;
 }
 
 void SceneObject::setTexture(Texture& texture)

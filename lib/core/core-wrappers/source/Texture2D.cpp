@@ -134,3 +134,8 @@ GLuint Texture2D::glData()
 {
 	return texture_.data();
 }
+
+Texture& Texture2D::getRawTexture()
+{
+	return texture_;
+}
