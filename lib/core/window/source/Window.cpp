@@ -122,7 +122,10 @@ void Window::setCursorPosition(double xpos, double ypos)
 
 void Window::setIcon(const std::filesystem::path& pathToIco)
 {
-	Image image(pathToIco, Gl::Texture::Channel::RGB);
+	Image image;
+	image.setInternalChannel(Gl::Texture::Channel::RGBA);
+	image.loadImage(pathToIco, false);
+	
 	GLFWimage glfwImage;
 	glfwImage.width = image.getWidth();
 	glfwImage.height = image.getHeight();

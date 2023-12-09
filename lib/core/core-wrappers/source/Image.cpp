@@ -132,7 +132,7 @@ void Image::loadImage(std::filesystem::path&& path, bool isFlipVertically)
 	data_ = stbi_load(path.string().c_str(), &width_, &height_, &channel, 0);
 	if (isEmpty())
 	{
-		throw std::runtime_error("The mage wasn't loaded: impossible to find the image by this path or undefined error");
+		throw std::runtime_error("The image wasn't loaded: impossible to find the image by this path or undefined error");
 	}
 
 	channel_ = static_cast<Channel>(channel);
@@ -141,7 +141,17 @@ void Image::loadImage(std::filesystem::path&& path, bool isFlipVertically)
 
 void Image::loadImage(const std::filesystem::path& path, bool isFlipVertically)
 {
-	loadImage(path);
+	clear();
+	stbi_set_flip_vertically_on_load(isFlipVertically);
+	int channel = 0;
+	data_ = stbi_load(path.string().c_str(), &width_, &height_, &channel, 0);
+	if (isEmpty())
+	{
+		throw std::runtime_error("The image wasn't loaded: impossible to find the image by this path or undefined error");
+	}
+
+	channel_ = static_cast<Channel>(channel);
+	name_ = path.stem().string();
 }
 
 void Image::clear()
