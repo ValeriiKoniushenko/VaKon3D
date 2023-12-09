@@ -30,6 +30,8 @@
 class Texture2D : public Utils::NotCopyableButMovable, public JsonPrintable
 {
 public:
+	Texture2D();
+
 	[[nodiscard]] int getWidth() const;
 	[[nodiscard]] int getHeight() const;
 	[[nodiscard]] glm::ivec2 getSize() const;

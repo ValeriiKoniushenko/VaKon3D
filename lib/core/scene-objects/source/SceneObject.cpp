@@ -580,6 +580,12 @@ const Texture* SceneObject::getTexture() const
 	return diffuseTexture_;
 }
 
+void SceneObject::setSpecularTexture(Texture2D& texture)
+{
+	specularTexture_ = &texture.getRawTexture();
+	isDirtyTexture_ = true;
+}
+
 void SceneObject::setSpecularTexture(Texture& texture)
 {
 	specularTexture_ = &texture;

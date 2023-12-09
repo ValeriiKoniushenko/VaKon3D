@@ -22,6 +22,12 @@
 
 #include "Texture2D.h"
 
+Texture2D::Texture2D()
+{
+	texture_.generate();
+	texture_.bind();
+}
+
 int Texture2D::getWidth() const
 {
 	return image_.getWidth();

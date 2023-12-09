@@ -118,6 +118,7 @@ public:
 	[[nodiscard]] virtual Texture* getTexture();
 	[[nodiscard]] virtual const Texture* getTexture() const;
 
+	virtual void setSpecularTexture(Texture2D& texture);
 	virtual void setSpecularTexture(Texture& texture);
 	[[nodiscard]] virtual Texture* getSpecularTexture();
 	[[nodiscard]] virtual const Texture* getSpecularTexture() const;
