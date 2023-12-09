@@ -20,13 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "Debug.h"
 
-#include "CopyableAndMoveable.h"
-#include "json.hpp"
+#include "Logger.h"
 
-class JsonPrintable : public Utils::CopyableAndMoveable
+void DebugBreak(const char* message)
 {
-public:
-	[[nodiscard]] virtual nlohmann::json toJson() const = 0;
-};
+#ifdef __clang__
+	__builtin_debugtrap();
+#elif _MSC_VER
+	DebugBreak();
+#else
+	spdlog::get("core")->error(message);
+#endif
+}

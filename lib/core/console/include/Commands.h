@@ -30,7 +30,7 @@
 class BaseCommand : public Utils::CopyableAndMoveable
 {
 public:
-	explicit BaseCommand(const std::string& commandName, const std::string& hints) : commandName_(commandName), hints_(hints)
+	explicit BaseCommand(const std::string& commandName, const std::string& hints) : hints_(hints), commandName_(commandName)
 	{
 	}
 

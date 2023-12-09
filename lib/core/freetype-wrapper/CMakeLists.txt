@@ -23,6 +23,5 @@ target_link_libraries(
 	Delegate
 	Misc
 	Window
-	Boost
 	freetype
 )

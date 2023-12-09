@@ -20,13 +20,4 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
-
-#include "CopyableAndMoveable.h"
-#include "json.hpp"
-
-class JsonPrintable : public Utils::CopyableAndMoveable
-{
-public:
-	[[nodiscard]] virtual nlohmann::json toJson() const = 0;
-};
+#include "BasePlayerState.h"

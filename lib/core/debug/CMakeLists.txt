@@ -5,24 +5,17 @@ file(
 )
 
 add_library(
-	Core-Wrappers STATIC
+	Debug STATIC
 	${Sources}
 )
 
 target_include_directories(
-	Core-Wrappers PUBLIC
+	Debug PUBLIC
 	include
 )
 
 target_link_libraries(
-	Core-Wrappers PUBLIC
+	Debug PUBLIC
 	Utils
-	glfw
-	Glad
 	Logger
-	Delegate
-	Misc
-	Window
-	FreeType-Wrapper
-	Debug
 )

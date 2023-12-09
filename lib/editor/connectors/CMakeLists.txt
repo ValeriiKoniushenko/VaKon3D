@@ -12,7 +12,6 @@ target_link_libraries(Connectors PUBLIC
 	WSA
 	Utils
 	Core-Wrappers
-	Boost
 	Socket
 	Console
 	Editor-Integration

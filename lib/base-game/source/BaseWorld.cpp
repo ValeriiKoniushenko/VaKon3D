@@ -20,13 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#include "BaseWorld.h"
 
-#include "CopyableAndMoveable.h"
-#include "json.hpp"
-
-class JsonPrintable : public Utils::CopyableAndMoveable
+void BaseWorld::clear()
 {
-public:
-	[[nodiscard]] virtual nlohmann::json toJson() const = 0;
-};
+	this->gameMode.release();
+	this->gameState.release();
+	this->playerState.release();
+}

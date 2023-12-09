@@ -22,11 +22,4 @@
 
 #pragma once
 
-#include "CopyableAndMoveable.h"
-#include "json.hpp"
-
-class JsonPrintable : public Utils::CopyableAndMoveable
-{
-public:
-	[[nodiscard]] virtual nlohmann::json toJson() const = 0;
-};
+void DebugBreak(const char* message);

@@ -22,11 +22,19 @@
 
 #pragma once
 
-#include "CopyableAndMoveable.h"
-#include "json.hpp"
+#include "NotCopyableAndNotMovable.h"
+#include "BaseGameMode.h"
+#include "BaseGameState.h"
+#include "BasePlayerState.h"
 
-class JsonPrintable : public Utils::CopyableAndMoveable
+#include <memory>
+
+class BaseWorld : public Utils::NotCopyableAndNotMovable
 {
 public:
-	[[nodiscard]] virtual nlohmann::json toJson() const = 0;
+	std::unique_ptr<BaseGameMode> gameMode;
+	std::unique_ptr<BaseGameState> gameState;
+	std::unique_ptr<BasePlayerState> playerState;
+
+	virtual void clear();
 };

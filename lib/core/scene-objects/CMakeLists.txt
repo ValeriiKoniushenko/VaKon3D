@@ -23,7 +23,6 @@ target_link_libraries(
 	Delegate
 	Misc
 	Window
-	Boost
 	FreeType-Wrapper
 	Camera
 	World

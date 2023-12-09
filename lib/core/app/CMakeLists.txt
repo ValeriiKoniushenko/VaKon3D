@@ -12,6 +12,5 @@ target_link_libraries(App PUBLIC
 	WSA
 	Utils
 	Core-Wrappers
-	Boost
 	Editor-Integration
 )

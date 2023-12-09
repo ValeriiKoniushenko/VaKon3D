@@ -36,7 +36,7 @@ class ConsoleConnector : public Utils::NotCopyableAndNotMovable
 public:
 	inline static const std::filesystem::path pathToHistory = "history.txt";
 
-	ConsoleConnector(TCPClientSocket& acceptedClient);
+	explicit ConsoleConnector(TCPClientSocket& acceptedClient);
 
 	void deserializeConsoleCommands();
 	void serializeConsoleCommands();
