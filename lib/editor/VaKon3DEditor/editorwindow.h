@@ -85,13 +85,17 @@ private:
 	void addConsoleCommandToScreen(const QString& command, bool isIn);
 	void deserializeConsoleCommands();
 	void serializeConsoleCommands();
+	bool eventFilter(QObject* obj, QEvent* event) override;
 
 	// slots
 	void onTabClicked(QTreeWidgetItem* item, int column);
 	void onEnterDataToConsole();
+	void onTextChangedConsoleLineEdit(const QString&);
 
 private:
 	std::vector<QString> commands_;
+	int currentCommandIndex = -1;
+
 	Ui::EditorWindow* ui;
 	TCPServerSocket serverSocket;
 	TCPClientSocket acceptedClient;

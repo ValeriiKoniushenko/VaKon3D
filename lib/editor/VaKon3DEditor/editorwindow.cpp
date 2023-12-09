@@ -15,12 +15,14 @@ EditorWindow::EditorWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::Ed
 	deserializeConsoleCommands();
 
 	Wsa::instance().initialize(1, 1);
-	onConnectToServer(false);
+	// onConnectToServer(false);
 
 	connect(ui->treeWidget, &QTreeWidget::itemClicked, this, &EditorWindow::onTabClicked);
 	connect(ui->pushButtonConnect, &QPushButton::clicked, this, &EditorWindow::onConnectToServer);
 	connect(ui->lineEditConsole, &QLineEdit::returnPressed, this, &EditorWindow::onEnterDataToConsole);
+	connect(ui->lineEditConsole, &QLineEdit::textChanged, this, &EditorWindow::onTextChangedConsoleLineEdit);
 	connect(ui->pushButtonConsoleEnter, &QPushButton::pressed, this, &EditorWindow::onEnterDataToConsole);
+	ui->lineEditConsole->installEventFilter(this);
 }
 
 EditorWindow::~EditorWindow()
@@ -208,7 +210,7 @@ void EditorWindow::deserializeConsoleCommands()
 				{
 					addConsoleCommandToScreen(line.c_str(), false);
 				}
-				commands_.push_back(line.c_str());
+				commands_.emplace_back(line.c_str());
 			}
 		}
 
@@ -219,4 +221,39 @@ void EditorWindow::deserializeConsoleCommands()
 void EditorWindow::addConsoleCommandToScreen(const QString& command, bool isIn)
 {
 	ui->plainTextEditConsole->appendPlainText((isIn ? "> " : "< ") + command);
+}
+
+bool EditorWindow::eventFilter(QObject* obj, QEvent* event)
+{
+	if (obj == ui->lineEditConsole)
+	{
+		if (event->type() == QEvent::KeyPress)
+		{
+			QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent->key() == Qt::Key_Up)
+			{
+				if (currentCommandIndex + 1 < commands_.size())
+				{
+					++currentCommandIndex;
+					ui->lineEditConsole->setText(commands_.at(commands_.size() - currentCommandIndex - 1));
+				}
+				return true;
+			}
+			else if (keyEvent->key() == Qt::Key_Down)
+			{
+				if (currentCommandIndex - 1 >= 0)
+				{
+					--currentCommandIndex;
+					ui->lineEditConsole->setText(commands_.at(commands_.size() - currentCommandIndex - 1));
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	return QMainWindow::eventFilter(obj, event);
+}
+
+void EditorWindow::onTextChangedConsoleLineEdit(const QString&)
+{
 }
