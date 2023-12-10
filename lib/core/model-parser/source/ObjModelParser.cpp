@@ -27,10 +27,6 @@
 void ObjModelParser::setObjFileContent(const std::string& buffer)
 {
 	file_ = std::move(std::stringstream(buffer));
-
-	parse();
-
-	int i = 1;
 }
 
 std::pair<ObjModelParser::VertexData, std::string> ObjModelParser::getLine(std::string line) const
@@ -101,6 +97,8 @@ std::vector<ObjModelParser::ModelData> ObjModelParser::getModelData()
 
 void ObjModelParser::parse()
 {
+	file_.clear();
+	file_.seekg(std::ios::beg);
 	while (!file_.eof())
 	{
 		std::string line;
@@ -256,4 +254,28 @@ void ObjModelParser::convertFileDataToModel(std::size_t index)
 
 		modelsData_.back().vertices_.push_back(unit);
 	}
+}
+
+std::vector<std::string> ObjModelParser::getObjectNames()
+{
+	std::vector<std::string> names;
+
+	while (!file_.eof())
+	{
+		std::string line;
+		std::getline(file_, line);
+
+		if (isIgnoreLine(line))
+		{
+			continue;
+		}
+
+		auto lineData = getLine(std::move(line));
+		if (lineData.first == VertexData::ObjectName)
+		{
+			names.push_back(std::move(lineData.second));
+		}
+	}
+
+	return names;
 }

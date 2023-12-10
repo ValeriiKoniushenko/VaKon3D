@@ -43,7 +43,7 @@ class SceneObject : public JsonPrintable, public Updateable
 public:
 	inline static const float minMass = 0.0001f;
 	inline static const float maxMass = 16'000'000.f;
-	inline static const float airResistance = 0.999f;
+	inline static const float airResistance = 0.95f;
 
 	SceneObject();
 	SceneObject(SceneObject&& other) = default;
@@ -149,6 +149,10 @@ public:
 
 	[[nodiscard]] virtual std::optional<glm::vec3> isIntersectsWithRayCast(const RayCast& ray) const;
 
+	void saveToCache();
+	void loadFromCache();
+	[[nodiscard]] bool checkAvailabilityInCache();
+
 protected:
 	virtual void recalculateMatrices();
 	virtual void setVertices(){};
@@ -162,7 +166,7 @@ protected:
 	glm::vec3 scale_ = glm::vec3(1.f, 1.f, 1.f);
 	glm::vec3 origin_{};
 	float speed_{};
-	float maxSpeed_{200.f};
+	float maxSpeed_{2000.f};
 	float mass_ = 1.f;
 	glm::vec3 impulse_{};
 	float maxPitch_ = 90.f;

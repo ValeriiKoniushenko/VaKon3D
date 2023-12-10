@@ -34,6 +34,7 @@
 #include "glm/gtx/transform.hpp"
 
 #include <algorithm>
+#include <fstream>
 
 SceneObject::SceneObject()
 {
@@ -802,4 +803,61 @@ std::optional<glm::vec3> SceneObject::isIntersectsWithRayCast(const RayCast& ray
 	}
 
 	return {};
+}
+
+void SceneObject::saveToCache()
+{
+	std::filesystem::path pathToCache = "cache";
+	if (!exists(pathToCache))
+	{
+		std::filesystem::create_directory(pathToCache);
+		if (!exists(pathToCache))
+		{
+			DebugBreak();
+			return;
+		}
+	}
+
+	std::ofstream file;
+	file.open(pathToCache.string() + "/" + name_ + ".obj.cache", std::ios::binary);
+	if (!file.is_open())
+	{
+		DebugBreak();
+		return;
+	}
+	file.write(reinterpret_cast<const char*>(triangles_.data()), triangles_.size() * sizeof(TriangleVbo::Unit));
+	file.close();
+}
+
+void SceneObject::loadFromCache()
+{
+	std::filesystem::path pathToCache = "cache";
+	std::ifstream file;
+	file.open(pathToCache.string() + "/" + name_ + ".obj.cache", std::ios::binary);
+	if (!file.is_open())
+	{
+		throw std::runtime_error("Can't find model '" + name_ + "' in the cache");
+	}
+
+	file.seekg(0, std::ios::end);
+	std::size_t fileSize = file.tellg();
+	file.seekg(0, std::ios::beg);
+
+	triangles_.resize(fileSize / sizeof(TriangleVbo::Unit));
+
+	file.read(reinterpret_cast<char*>(triangles_.data()), triangles_.size() * sizeof(TriangleVbo::Unit));
+	file.close();
+}
+
+bool SceneObject::checkAvailabilityInCache()
+{
+	std::filesystem::path pathToCache = "cache";
+	std::ifstream file;
+	file.open(pathToCache.string() + "/" + name_ + ".obj.cache", std::ios::binary);
+	if (!file.is_open())
+	{
+		return false;
+	}
+	file.close();
+	return true;
 }

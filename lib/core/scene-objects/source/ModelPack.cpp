@@ -22,6 +22,7 @@
 
 #include "ModelPack.h"
 
+#include "Logger.h"
 #include "ObjModelParser.h"
 #include "SceneObjectCollector.h"
 #include "UtilsFunctions.h"
@@ -40,18 +41,47 @@ void ModelPack::loadFromFile(const std::filesystem::path& path)
 {
 	requireValidFilePath(path);
 
+	int t = ::time(nullptr);
 	ObjModelParser parser;
 	parser.setObjFileContent(Utils::getFileContent(path));
 
-	auto md = std::move(parser.getModelData());
-	for (auto& el : md)
+	auto names = parser.getObjectNames();
+	bool everythingAreLoaded = false;
+	for (auto& name : names)
 	{
 		SceneObject sceneObject;
-		sceneObject.loadVertices(el.vertices_);
-		sceneObject.setName(el.name);
-		models_.emplace(el.name, std::move(sceneObject));
-		GetSceneObjectCollector().add(&models_.find(el.name)->second);
+		sceneObject.setName(name);
+		if (sceneObject.checkAvailabilityInCache())
+		{
+			sceneObject.loadFromCache();
+			models_.emplace(name, std::move(sceneObject));
+			GetSceneObjectCollector().add(&models_.find(name)->second);
+			everythingAreLoaded = true;
+		}
+		else
+		{
+			models_.clear();
+			everythingAreLoaded = false;
+			break;
+		}
 	}
+
+	if (!everythingAreLoaded)
+	{
+		parser.parse();
+
+		auto md = std::move(parser.getModelData());
+		for (auto& el : md)
+		{
+			SceneObject sceneObject;
+			sceneObject.loadVertices(el.vertices_);
+			sceneObject.setName(el.name);
+			sceneObject.saveToCache();
+			models_.emplace(el.name, std::move(sceneObject));
+			GetSceneObjectCollector().add(&models_.find(el.name)->second);
+		}
+	}
+	spdlog::get("core")->info("A model loading took {} seconds", ::time(nullptr) - t);
 }
 
 bool ModelPack::validateFileFormat(const std::filesystem::path& path) const

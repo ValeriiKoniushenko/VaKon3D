@@ -54,11 +54,12 @@ public:
 
 	void setObjFileContent(const std::string& buffer);
 	[[nodiscard]] std::vector<ModelData> getModelData();
+	[[nodiscard]] std::vector<std::string> getObjectNames();
+	void parse();
 
 private:
 	std::pair<VertexData, std::string> getLine(std::string line) const;
 	[[nodiscard]] bool isIgnoreLine(const std::string& line) const;
-	void parse();
 	void extrudeDataFromLine(std::pair<VertexData, std::string> lineData);
 	void convertFileDataToModels();
 	void convertFileDataToModel(std::size_t index);
