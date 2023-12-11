@@ -183,9 +183,9 @@ GLenum Image::convertChannelToGlChannel(Image::Channel channel)
 	}
 }
 
-void Image::loadToGpu()
+void Image::loadToGpu(Gl::Texture::Target target /* = Gl::Texture::Target::Texture2D*/)
 {
-	Gl::Texture::texImage2D(Gl::Texture::Target::Texture2D, 0, static_cast<GLenum>(internalChannel_), width_, height_, 0,
+	Gl::Texture::texImage2D(target, 0, static_cast<GLenum>(internalChannel_), width_, height_, 0,
 		convertChannelToGlChannel(channel_), GL_UNSIGNED_BYTE, data_);
 }
 

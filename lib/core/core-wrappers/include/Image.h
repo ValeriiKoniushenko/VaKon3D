@@ -64,7 +64,7 @@ public:
 	[[nodiscard]] Gl::Texture::Channel getInternalChannel() const;
 	void loadImage(const std::filesystem::path&, bool isFlipVertically = true);
 	void loadImage(std::filesystem::path&&, bool isFlipVertically = true);
-	void loadToGpu();
+	void loadToGpu(Gl::Texture::Target target = Gl::Texture::Target::Texture2D);
 	void clear();
 	[[nodiscard]] bool isEmpty() const;
 	[[nodiscard]] std::string getName() const;

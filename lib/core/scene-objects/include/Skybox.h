@@ -22,30 +22,28 @@
 
 #pragma once
 
-#include "Color.h"
-#include "glm/glm.hpp"
+#include "Image.h"
+#include "NotCopyableButMovable.h"
+#include "Texture.h"
+#include "Vao.h"
+#include "Vbo.h"
 
-struct Lightning
+class ShaderPack;
+class Camera;
+
+class Skybox : public Utils::NotCopyableButMovable
 {
-	struct Ambient
-	{
-		GlColor3 lightColor = {1.f, 1.f, 1.f};
-		glm::vec3 direction = {1.f, 0.7f, 0.5f};
-		float maxDark = 0.02f;
-	} ambient;
+public:
+	inline static constexpr std::size_t imagesCount = 6;
 
-	struct Specular
-	{
-		GlColor3 lightColor = {1.f, 1.f, 1.f};
-		glm::vec3 position = {100'000.f, 100'000.f, 0.f};
-		float intensity = 0.1f;
-		int specularPow = 1024;
-	} specular;
+	Skybox();
 
-	struct Fog
-	{
-		Color4 color = {51, 76, 76, 255};
-		float minDistance = 8000.f;
-		float maxDistance = 10'000.f;
-	} fog;
+	void loadFromFiles(const std::vector<std::filesystem::path>& pathToImages);
+	void draw(ShaderPack& shaderPack, Camera& camera);
+
+private:
+	Image images_[imagesCount];
+	Texture texture_;
+	Vao vao_;
+	Vbo vbo_;
 };
