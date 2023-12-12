@@ -24,6 +24,7 @@
 
 #include "ShaderPack.h"
 #include "Texture.h"
+#include "Texture2D.h"
 #include "Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -31,6 +32,12 @@
 void Widget::setTexture(Texture& texture)
 {
 	texture_ = &texture;
+	isDirtyTexture_ = true;
+}
+
+void Widget::setTexture(Texture2D& texture)
+{
+	texture_ = &texture.getRawTexture();
 	isDirtyTexture_ = true;
 }
 
@@ -54,15 +61,6 @@ void Widget::draw(ShaderPack& shaderPack)
 	auto& shader = shaderPack["widget"];
 	shader.use();
 
-	if (texture_)
-	{
-		texture_->bind();
-		if (isDirtyTexture_)
-		{
-			texture_->loadToGpu();
-			isDirtyTexture_ = false;
-		}
-	}
 	if (!vao_.isGenerated())
 	{
 		vao_.generate();
@@ -74,6 +72,17 @@ void Widget::draw(ShaderPack& shaderPack)
 
 	vao_.bind();
 	vbo_.bind();
+
+	if (texture_)
+	{
+		Gl::Texture::active(0);
+		texture_->bind();
+		if (isDirtyTexture_)
+		{
+			texture_->loadToGpu();
+			isDirtyTexture_ = false;
+		}
+	}
 
 	if (isDirtyVertices_)
 	{
@@ -170,4 +179,10 @@ void Widget::setOrigin(glm::vec2 origin)
 glm::vec2 Widget::getOrigin() const
 {
 	return origin_;
+}
+
+nlohmann::json Widget::toJson() const
+{
+	nlohmann::json json;
+	return json;
 }

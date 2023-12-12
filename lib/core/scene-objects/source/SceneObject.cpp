@@ -513,15 +513,6 @@ void SceneObject::tryDrawOutline(ShaderPack& shaderPack, Camera& camera)
 
 	auto& shader = shaderPack["outline"];
 	shader.use();
-	if (diffuseTexture_)
-	{
-		diffuseTexture_->bind();
-		if (isDirtyTexture_)
-		{
-			diffuseTexture_->loadToGpu();
-			isDirtyTexture_ = false;
-		}
-	}
 	if (!vao_.isGenerated())
 	{
 		vao_.generate();

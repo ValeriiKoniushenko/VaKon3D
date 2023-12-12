@@ -22,19 +22,23 @@
 
 #pragma once
 
+#include "JsonPrintable.h"
+#include "NotCopyableButMovable.h"
 #include "Size.h"
 #include "Vao.h"
 #include "WidgetVbo.h"
 
 class Texture;
+class Texture2D;
 class ShaderPack;
 
-class Widget
+class Widget : public Utils::NotCopyableButMovable, public JsonPrintable
 {
 public:
 	Widget() = default;
 	explicit Widget(Texture& texture);
 
+	void setTexture(Texture2D& texture);
 	void setTexture(Texture& texture);
 	[[nodiscard]] Texture* getTexture();
 	[[nodiscard]] const Texture* getTexture() const;
@@ -56,7 +60,9 @@ public:
 	void setOrigin(glm::vec2 origin);
 	[[nodiscard]] glm::vec2 getOrigin() const;
 
-private:
+	[[nodiscard]] nlohmann::json toJson() const override;
+
+protected:
 	Texture* texture_ = nullptr;
 	Vao vao_;
 	WidgetVbo vbo_;
