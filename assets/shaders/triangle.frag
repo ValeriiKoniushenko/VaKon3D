@@ -22,6 +22,7 @@ uniform int uSpecularPow;
 uniform vec4 uFogColor;
 uniform float uFogMinDistance;
 uniform float uFogMaxDistance;
+uniform float uGamma;
 
 float getFogFactor(float d)
 {
@@ -65,4 +66,6 @@ void main()
     oColor.rgb *= diffuseLight;
     oColor.rgb += specularLight * uSpecularColor;
     oColor = calcFog(oColor);
+
+    oColor.rgb = pow(oColor.rgb, vec3(1.0 / uGamma));
 }

@@ -465,6 +465,7 @@ void SceneObject::draw(ShaderPack& shaderPack, const Lightning& lightning, Camer
 	shader.uniform("uFogColor", toGlColor4(lightning.fog.color));
 	shader.uniform("uFogMinDistance", lightning.fog.minDistance);
 	shader.uniform("uFogMaxDistance", lightning.fog.maxDistance);
+	shader.uniform("uGamma", lightning.gamma);
 
 	shader.uniform("uTexture", 0);
 	shader.uniform("uSpecularTexture", 1);

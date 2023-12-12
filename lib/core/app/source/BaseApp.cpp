@@ -26,7 +26,7 @@
 
 void BaseApp::start()
 {
-	Initer::init({.glfwVersion = glm::ivec2(3, 3), .windowSize = {3000, 1400}, .title = "Stronghold Royale"});
+	Initer::init({.glfwVersion = glm::ivec2(3, 3), .windowSize = {1600, 1200}, .title = "Stronghold Royale"});
 
 	GetWindow().viewport(0, 0, GetWindow().getSize().width, GetWindow().getSize().height);
 

@@ -48,4 +48,6 @@ struct Lightning
 		float minDistance = 8000.f;
 		float maxDistance = 10'000.f;
 	} fog;
+
+	float gamma = 1.6;
 };
